@@ -59,12 +59,11 @@ export interface SiteContent {
     yes: string; no: string; optional: string; required: string; next: string; back: string;
     submit: string; submitting: string; close: string; selectPlaceholder: string;
     addEducation: string; removeEducation: string; validationMessage: string;
-    defaultCountryCode: string; countryCodePlaceholder: string;
     labels: Record<string, string>;
     options: {
       genders: string[]; maritalStatuses: string[]; qualifications: string[];
       targetPrograms: string[]; skills: string[]; languages: string[]; levels: string[];
-      fundingPlans: string[]; countryCodes: string[];
+      fundingPlans: string[];
     };
   };
 }

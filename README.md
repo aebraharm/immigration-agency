@@ -80,7 +80,7 @@ The public **Book a consultation now** buttons open a glassmorphic, dynamic-logo
 
 **Student assessment:** personal/contact details, conditional passport details, repeatable education history, Bachelor's (BSc)/Master's/PhD target, destination, course/research field, intake, funding, language proficiency/exams, all disclosures and mandatory terms.
 
-Both forms use five guided steps, per-step validation, conditional fields, keyboard-accessible dialogs, server-side validation, a honeypot and submission references. Primary and alternative mobile numbers have independent selectable country-code fields preset to **+1**, with CMS-editable code options, labels, defaults and North American number placeholders. The selected alternative country code is included in the submission data.
+Both forms use five guided steps, per-step validation, conditional fields, keyboard-accessible dialogs, server-side validation, a honeypot and submission references. Primary and alternative mobile numbers are open international text fields with CMS-editable **+1 (555) 000-0000** placeholders. Each complete number is stored and displayed exactly as submitted, without a separate country-code dropdown or preset-list restriction.
 
 ## Database and preview fallback
 
