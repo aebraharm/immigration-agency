@@ -1,0 +1,28 @@
+# Dependencies and production output
+node_modules/
+.next/
+out/
+dist/
+build/
+
+# Netlify and temporary build/test caches
+.netlify/
+.turbo/
+.cache/
+.parcel-cache/
+coverage/
+.eslintcache
+*.tsbuildinfo
+*.log
+
+# Local preview database (seed source remains tracked in db/seed.json)
+.data/*.json
+.data/*.tmp
+
+# Environment secrets (.env.example remains tracked)
+.env
+.env.*
+!.env.example
+
+# Operating system files
+.DS_Store

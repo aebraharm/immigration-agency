@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { --crimson: #DC2626; --royal: #2563EB; --ink: #211A1C; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+body { margin: 0; background: #fff; color: var(--ink); font-family: 'Manrope Variable', Manrope, ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+::selection { background: #FEE2E2; color: #7F1D1D; }
+img, video { max-width: 100%; }
+
+@layer components {
+  .container-site { @apply mx-auto w-full max-w-[1240px] px-5 sm:px-8 lg:px-10; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 outline-none disabled:cursor-not-allowed disabled:opacity-50 active:translate-y-px active:bg-blue-600 active:text-white active:border-blue-600 focus:bg-blue-600 focus:text-white focus:border-blue-600 focus-visible:ring-4 focus-visible:ring-blue-600/20; }
+  .btn-primary { @apply btn bg-red-600 text-white border border-red-600 shadow-[0_10px_28px_-12px_rgba(220,38,38,.8)] hover:bg-red-700 hover:border-red-700 hover:shadow-lg; }
+  .btn-secondary { @apply btn bg-white text-ink-900 border border-ink-900/15 hover:border-red-600/40 hover:text-red-700 hover:bg-red-50/50; }
+  .btn-ghost { @apply btn border border-transparent text-ink-700 hover:bg-red-50 hover:text-red-700; }
+  .btn-dark { @apply btn bg-ink-950 text-white border border-ink-950 hover:bg-ink-700; }
+  .btn-md { @apply min-h-11 px-5 py-2.5 text-[13px]; }
+  .btn-lg { @apply min-h-[54px] px-7 py-3.5 text-sm; }
+  .btn-sm { @apply min-h-9 px-3.5 py-2 text-xs; }
+  .icon-btn { @apply btn h-10 w-10 shrink-0 border border-ink-900/10 bg-white text-ink-700 hover:bg-red-50 hover:text-red-600; }
+  .glass { @apply backdrop-blur-xl bg-white/75 border border-white/40 shadow-glass; }
+  .eyebrow { @apply inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.19em] text-red-600; }
+  .display-title { @apply font-serif text-[42px] leading-[1.04] tracking-[-0.025em] text-ink-950 sm:text-5xl lg:text-[58px]; }
+  .field-label { @apply mb-2 block text-[12px] font-bold text-ink-900; }
+  .field-input { @apply w-full rounded-xl border border-ink-900/15 bg-white px-3.5 py-3 text-sm text-ink-950 outline-none transition placeholder:text-ink-500/70 hover:border-ink-900/25 focus:border-red-600 focus:ring-4 focus:ring-red-600/10 disabled:bg-gray-50 disabled:text-ink-500; }
+  .admin-card { @apply rounded-2xl border border-ink-900/10 bg-white shadow-[0_10px_35px_-30px_rgba(34,22,25,.4)]; }
+}
+
+/* A final global safeguard for the requested click/focus behaviour. */
+button:active, button:focus { background-color: var(--royal) !important; color: #fff !important; border-color: var(--royal) !important; }
+a.btn:active, a.btn:focus { background-color: var(--royal) !important; color: #fff !important; border-color: var(--royal) !important; }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.fine-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+.fine-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.fine-scrollbar::-webkit-scrollbar-thumb { background: #D8D1D3; border-radius: 20px; }
+.text-balance { text-wrap: balance; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}

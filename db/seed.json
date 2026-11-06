@@ -1,0 +1,449 @@
+{
+  "content": {
+    "seo": {
+      "title": "Redpath Immigration — Your next chapter, without borders",
+      "description": "Clear, considered immigration guidance for global careers, Master's and PhD study across the USA, Canada, UK, Luxembourg and Australia."
+    },
+    "brand": {
+      "name": "Redpath",
+      "legalName": "Redpath Immigration Advisory",
+      "tagline": "Immigration, made clear.",
+      "logo": "/brand-mark.svg",
+      "logoAlt": "Redpath Immigration Advisory",
+      "email": "hello@redpathimmigration.com",
+      "phone": "+234 810 555 0148",
+      "whatsapp": "+234 810 555 0148",
+      "address": "24 Aba Road, Port Harcourt, Rivers State, Nigeria",
+      "officeHours": "Monday–Friday, 9:00–17:00 WAT"
+    },
+    "navigation": [
+      { "id": "nav-destinations", "label": "Destinations", "href": "#destinations" },
+      { "id": "nav-study", "label": "Study abroad", "href": "#study" },
+      { "id": "nav-approach", "label": "Our approach", "href": "#approach" },
+      { "id": "nav-stories", "label": "Success stories", "href": "#stories" }
+    ],
+    "hero": {
+      "eyebrow": "GLOBAL MOBILITY, PERSONALLY GUIDED",
+      "title": "Your next chapter,",
+      "titleAccent": "without borders.",
+      "description": "Thoughtful immigration and study-abroad guidance, built around your ambitions. From your first question to your arrival, we make every step feel clear.",
+      "primaryCta": "Book a consultation now",
+      "secondaryCta": "Explore destinations",
+      "trustNote": "Private assessment · No obligation · Response within one business day",
+      "image": "/images/hero-traveller.jpg",
+      "imageAlt": "A confident traveller beginning her international journey",
+      "imageEyebrow": "YOUR JOURNEY, OUR EXPERTISE",
+      "imageCardTitle": "One clear plan. Every detail considered.",
+      "imageCardText": "Eligibility, documentation and timelines—mapped around you.",
+      "stats": [
+        { "value": "1,200+", "label": "Pathways mapped" },
+        { "value": "5", "label": "Global destinations" },
+        { "value": "4.9/5", "label": "Client experience" }
+      ]
+    },
+    "journey": {
+      "eyebrow": "A CONSIDERED APPROACH",
+      "title": "Less guesswork. More forward motion.",
+      "description": "A dedicated adviser and a transparent process, so you always know what comes next.",
+      "steps": [
+        { "number": "01", "title": "Discover", "description": "We listen to your goals, assess your profile and identify the routes that genuinely fit." },
+        { "number": "02", "title": "Prepare", "description": "Receive a tailored checklist and hands-on support for every form, document and detail." },
+        { "number": "03", "title": "Submit", "description": "We quality-check your application and guide you through submission, interviews and updates." },
+        { "number": "04", "title": "Settle", "description": "Practical pre-departure and arrival guidance helps you begin your next chapter with confidence." }
+      ]
+    },
+    "countriesSection": {
+      "eyebrow": "WHERE WILL YOU GO NEXT?",
+      "title": "A world of opportunity.",
+      "titleAccent": "Five focused destinations.",
+      "description": "Explore carefully researched work and residency pathways, with clear eligibility criteria and realistic timelines.",
+      "cardCta": "Explore pathways",
+      "routesTitle": "Popular pathways",
+      "processTitle": "How the process works",
+      "eligibilityTitle": "Core eligibility criteria",
+      "timelineTitle": "Your step-by-step timeline",
+      "modalCta": "Assess my eligibility",
+      "closeLabel": "Close destination details"
+    },
+    "studySection": {
+      "eyebrow": "MASTER'S & PHD OPPORTUNITIES",
+      "title": "A degree that takes you",
+      "titleAccent": "further.",
+      "description": "From shortlisting research-led universities to preparing a compelling application, we help ambitious graduates turn academic potential into global opportunity.",
+      "image": "/images/study-campus.jpg",
+      "imageAlt": "A doctoral graduate outside a modern international university",
+      "imageCaption": "Research. Community. A global perspective.",
+      "highlightsTitle": "Program highlights",
+      "requirementsTitle": "Typical requirements",
+      "intakeLabel": "Next intakes",
+      "investmentLabel": "Typical tuition",
+      "cardCta": "Start a student assessment",
+      "partnershipEyebrow": "A WIDER ACADEMIC NETWORK",
+      "partnershipText": "University options across the USA, Canada, UK, Luxembourg and Australia, matched to your academic profile, research interests and budget."
+    },
+    "testimonialsSection": {
+      "eyebrow": "REAL JOURNEYS. REAL PEOPLE.",
+      "title": "Their next chapter",
+      "titleAccent": "started here.",
+      "description": "Every move is personal. Hear from clients who turned a complex process into a life-changing new beginning.",
+      "ratingLabel": "out of 5 stars",
+      "videoLabel": "Play client story",
+      "verifiedLabel": "Verified client journey"
+    },
+    "faqSection": {
+      "eyebrow": "GOOD QUESTIONS, CLEAR ANSWERS",
+      "title": "Before we begin.",
+      "description": "A few things clients often want to know before their first consultation.",
+      "items": [
+        { "question": "What happens during the first consultation?", "answer": "We review your goals, background, education, experience and travel history. You will leave with an honest view of suitable pathways, likely timelines and the documents needed for a fuller assessment." },
+        { "question": "Can you guarantee a visa or admission?", "answer": "No ethical adviser can guarantee a decision made by a government or university. We can provide a careful assessment, a strong application strategy and meticulous preparation, while being transparent about risks and alternatives." },
+        { "question": "Do you support both work and study applications?", "answer": "Yes. Our assessment has dedicated pathways for skilled job applicants and for Master's or PhD candidates. Your consultation and checklist are tailored to the route you select." },
+        { "question": "How long does the process take?", "answer": "Timing varies by destination, program and individual circumstances. After your assessment, we provide a route-specific timeline covering preparation, submission and typical third-party processing times." }
+      ]
+    },
+    "finalCta": {
+      "eyebrow": "YOUR FUTURE DESERVES A CLEAR PLAN",
+      "title": "Let's make your next move the right one.",
+      "description": "Tell us where you want to go. We'll help you understand the smartest way forward.",
+      "button": "Book a consultation now",
+      "note": "A few minutes today. A much clearer journey tomorrow."
+    },
+    "footer": {
+      "description": "Clear, personal guidance for international careers, postgraduate study and life beyond borders.",
+      "exploreTitle": "Explore",
+      "contactTitle": "Start a conversation",
+      "legalTitle": "Important information",
+      "legalText": "Redpath provides immigration advisory and application-support services. We are not a government agency and do not make visa or admission decisions. Outcomes depend on the relevant authorities and each applicant's circumstances.",
+      "privacyText": "We collect the information you choose to provide in our assessment forms so we can review your enquiry, recommend suitable pathways and contact you about a consultation. This may include identity, contact, passport, education, employment, language, travel and disclosure information.\n\nWe use your information only for legitimate advisory, safeguarding and legal purposes. We do not sell applicant data. Access is limited to authorised personnel and service providers needed to operate our secure website and database. Information is retained only as long as necessary for these purposes or applicable legal obligations.\n\nYou may request access, correction or deletion of your information, or withdraw consent for future contact, by emailing our office. Some records may need to be retained where required by law. Our assessment forms use encrypted HTTPS transport in production; please do not send original identity documents or payment-card details through the website.",
+      "privacyLabel": "Privacy & data protection",
+      "termsLabel": "Service terms",
+      "copyright": "© 2026 Redpath Immigration Advisory. All rights reserved.",
+      "backToTopLabel": "Back to top"
+    },
+    "consultation": {
+      "title": "Your journey starts",
+      "titleAccent": "with a conversation.",
+      "description": "Complete a confidential assessment so our advisers can understand your goals and recommend a realistic next step.",
+      "chooseLabel": "What would you like to apply for?",
+      "jobTitle": "Job Application Form",
+      "jobDescription": "For skilled professionals exploring international employment and work-based immigration.",
+      "studentTitle": "Student Application Form",
+      "studentDescription": "For Master's and PhD candidates ready to pursue postgraduate study abroad.",
+      "privacyNote": "Your information is encrypted in transit and used only to assess your enquiry. We never sell applicant data.",
+      "successTitle": "Your assessment is with us.",
+      "successMessage": "Thank you for sharing your journey. An adviser will review your answers and contact you within one business day to arrange your consultation.",
+      "referenceLabel": "Your private reference",
+      "successCta": "Return to the website",
+      "termsTitle": "Terms & conditions",
+      "termsText": "By submitting this assessment, you confirm that the information supplied is complete and accurate to the best of your knowledge. You authorise Redpath Immigration Advisory to review your details and contact you about suitable immigration, employment or study pathways.\n\nThis assessment is an initial enquiry, not a guarantee of eligibility, employment, university admission, visa issuance or any decision by a third-party authority. Formal advisory services, fees and deliverables will be set out in a separate service agreement before paid work begins.\n\nYou consent to the secure processing of your personal, educational, employment and disclosure information for this assessment. Sensitive information is handled confidentially and retained only as long as necessary for advisory, legal and safeguarding purposes. You may request access, correction or deletion by contacting our office. Do not include original identity documents or payment-card information in this form.",
+      "termsCheckbox": "I have read and agree with the terms and conditions of your services.",
+      "reviewTitle": "A final look before you submit",
+      "reviewNote": "Please check your contact details and disclosures. You can go back to edit any section.",
+      "stepLabels": {
+        "job": ["Personal details", "Passport & education", "Work & skills", "Plans & background", "Review & submit"],
+        "student": ["Personal details", "Passport & academics", "Study plans", "Background", "Review & submit"]
+      }
+    },
+    "forms": {
+      "yes": "Yes",
+      "no": "No",
+      "optional": "Optional",
+      "required": "Required",
+      "next": "Save & continue",
+      "back": "Back",
+      "submit": "Submit my assessment",
+      "submitting": "Submitting securely…",
+      "close": "Close assessment",
+      "selectPlaceholder": "Please select",
+      "addEducation": "Add another qualification",
+      "removeEducation": "Remove qualification",
+      "validationMessage": "Please complete the highlighted fields before continuing.",
+      "labels": {
+        "personalDetails": "Personal details",
+        "personalDescription": "Tell us who you are and how we can reach you.",
+        "contactDetails": "Contact & residence",
+        "passportDetails": "International passport",
+        "passportDescription": "A passport is not required to enquire, but valid details help us assess your readiness.",
+        "education": "Educational qualification",
+        "educationHistory": "Educational qualification history",
+        "employmentHistory": "Employment history",
+        "currentEmployment": "Current employment",
+        "previousEmployment": "Previous employment",
+        "professionalSkills": "Professional skills",
+        "skillsDescription": "Select every area in which you have practical experience.",
+        "languageProficiency": "Language proficiency",
+        "languageDescription": "Choose one honest proficiency level for each language you know.",
+        "preferredEmployment": "Preferred employment",
+        "background": "Background, medical & travel",
+        "disclosures": "Your disclosures",
+        "programPreferences": "Target program & destination",
+        "academicInterests": "Course & research interests",
+        "fullName": "Full name",
+        "dateOfBirth": "Date of birth",
+        "gender": "Gender",
+        "nationality": "Nationality",
+        "residenceCountry": "Country of residence",
+        "streetAddress": "Street address",
+        "city": "City",
+        "state": "State / Province",
+        "postalCode": "Postal code",
+        "countryCode": "Country code",
+        "mobile": "Mobile number",
+        "alternativeMobile": "Alternative mobile number",
+        "email": "Email address",
+        "maritalStatus": "Marital status",
+        "hasChildren": "Do you have children?",
+        "childrenCount": "How many children do you have?",
+        "hasPassport": "Do you currently possess a valid international passport?",
+        "passportNumber": "Passport number",
+        "passportCity": "City of issue",
+        "passportIssueDate": "Date of issue",
+        "passportExpiryDate": "Expiry date",
+        "qualificationLevel": "Qualification level",
+        "highestQualification": "Highest qualification",
+        "institution": "Institution",
+        "institutionCountry": "Country of institution",
+        "graduationYear": "Year completed",
+        "grade": "Grade / classification",
+        "hasCurrentEmployment": "Are you currently employed?",
+        "currentEmployer": "Current employer",
+        "currentPosition": "Position / job title",
+        "currentEmploymentCountry": "Country of employment",
+        "employmentStartDate": "Employment start date",
+        "monthlySalary": "Monthly salary (include currency)",
+        "hasPreviousEmployment": "Do you have previous employment to add?",
+        "previousEmployer": "Previous employer",
+        "previousPosition": "Previous position",
+        "previousEmploymentCountry": "Country of previous employment",
+        "yearsWorked": "Years worked",
+        "skills": "Skills and experience",
+        "languages": "Languages",
+        "preferredCountry": "Preferred employment country",
+        "preferredOccupation": "Preferred occupation",
+        "expectedSalary": "Expected salary (include currency & period)",
+        "medicalCondition": "Do you have any medical condition that may affect your employment or studies?",
+        "medicalDetails": "Please describe the condition and any relevant support needs",
+        "criminalRecord": "Have you ever been convicted of any offence?",
+        "criminalDetails": "Please provide the relevant details",
+        "travelHistory": "Have you travelled outside your country of residence?",
+        "travelCountries": "List the countries you have visited",
+        "familyOutside": "Do you have family outside your country of residence?",
+        "familyCountry": "Which country or countries do they live in?",
+        "licensedExams": "Have you taken IELTS, NCLEX, AHPRA or other licensed / language exams?",
+        "examDetails": "List exams, scores and dates where available",
+        "targetProgram": "Target program",
+        "preferredDestination": "Preferred destination country",
+        "intendedCourse": "Intended course / discipline",
+        "researchTopic": "Proposed research field or topic",
+        "startIntake": "Preferred start intake",
+        "fundingPlan": "How do you plan to fund your studies?",
+        "startIntakePlaceholder": "For example: September 2027",
+        "reviewContact": "Your contact summary",
+        "reviewType": "Assessment type",
+        "reviewName": "Applicant",
+        "reviewEmail": "Email",
+        "reviewDestination": "Preferred destination",
+        "terms": "Terms & conditions agreement"
+      },
+      "options": {
+        "genders": ["Female", "Male", "Non-binary", "Prefer not to say"],
+        "maritalStatuses": ["Single", "Married", "Divorced", "Widowed", "Separated", "Prefer not to say"],
+        "qualifications": ["Secondary", "Diploma", "Bachelor's", "Master's", "PhD", "Others"],
+        "targetPrograms": ["Master's", "PhD"],
+        "skills": ["Accounting", "Admin", "Agriculture", "Caregiving", "Construction", "Customer Service", "Driving", "Electrical", "Engineering", "Factory Worker", "Healthcare (Nursing)", "Hospitality", "IT", "Manufacturing", "Sales", "Security", "Teaching", "Truck Driving", "Warehouse Operations", "Welding"],
+        "languages": ["English", "French", "Spanish", "German"],
+        "levels": ["Basic", "Intermediate", "Advanced", "Fluent"],
+        "fundingPlans": ["Self-funded", "Family sponsorship", "Scholarship / assistantship", "Employer sponsorship", "Student loan", "Still exploring options"]
+      }
+    }
+  },
+  "countries": [
+    {
+      "id": "country-usa",
+      "slug": "usa",
+      "name": "United States",
+      "code": "USA",
+      "flag": "🇺🇸",
+      "tagline": "Big ambition. Exceptional opportunity.",
+      "summary": "Speciality careers, employer-sponsored routes and world-leading research universities across one dynamic destination.",
+      "image": "",
+      "routes": ["H-1B speciality occupations", "EB-2 / EB-3 employment-based residency", "F-1 postgraduate study & OPT"],
+      "eligibility": ["A relevant degree, licence or substantial professional experience", "A qualifying US employer or academic institution for sponsored routes", "Evidence of English proficiency where required", "Admissibility, financial and civil documentation"],
+      "processes": [
+        { "title": "Profile & route assessment", "description": "We map your education, occupation and long-term goals against realistic work or postgraduate routes." },
+        { "title": "Sponsor or admission strategy", "description": "For employment, we clarify sponsorship requirements; for study, we build a balanced university shortlist." },
+        { "title": "Petition, application & interview", "description": "We support document preparation, application quality checks and confident interview preparation." }
+      ],
+      "timeline": [
+        { "step": "01", "title": "Assess", "duration": "1–2 weeks", "description": "Route comparison, document audit and a tailored action plan." },
+        { "step": "02", "title": "Prepare", "duration": "4–12 weeks", "description": "Credential, sponsor or university application preparation." },
+        { "step": "03", "title": "Process", "duration": "Varies by route", "description": "Government or institutional review, with regular status guidance." },
+        { "step": "04", "title": "Depart", "duration": "2–4 weeks", "description": "Interview, final documentation and practical pre-departure support." }
+      ],
+      "sortOrder": 1
+    },
+    {
+      "id": "country-canada",
+      "slug": "canada",
+      "name": "Canada",
+      "code": "CAN",
+      "flag": "🇨🇦",
+      "tagline": "Build a career. Find your community.",
+      "summary": "Transparent skilled-worker pathways, welcoming communities and postgraduate programs with valuable career outcomes.",
+      "image": "",
+      "routes": ["Express Entry", "Provincial Nominee Programs", "Postgraduate study & PGWP"],
+      "eligibility": ["Skilled experience and educational credential assessment where applicable", "Approved English or French language results", "Competitive points or a qualifying provincial / employer connection", "Settlement funds, medical and security admissibility"],
+      "processes": [
+        { "title": "Comprehensive ranking review", "description": "We evaluate your points, occupation, language potential and provincial options before recommending a route." },
+        { "title": "Credentials & profile", "description": "Plan language tests, educational assessments, reference letters and your federal or provincial profile." },
+        { "title": "Nomination & final application", "description": "Guidance through invitations, supporting evidence, biometrics, medicals and final submission." }
+      ],
+      "timeline": [
+        { "step": "01", "title": "Score", "duration": "1 week", "description": "Eligibility review and route-specific competitiveness assessment." },
+        { "step": "02", "title": "Evidence", "duration": "6–16 weeks", "description": "Language, credential and employment evidence preparation." },
+        { "step": "03", "title": "Apply", "duration": "Route dependent", "description": "Profile, nomination or study application and authority processing." },
+        { "step": "04", "title": "Arrive", "duration": "2–6 weeks", "description": "Settlement planning, housing guidance and arrival checklist." }
+      ],
+      "sortOrder": 2
+    },
+    {
+      "id": "country-uk",
+      "slug": "united-kingdom",
+      "name": "United Kingdom",
+      "code": "GBR",
+      "flag": "🇬🇧",
+      "tagline": "Global careers. Academic heritage.",
+      "summary": "Skilled employment across key sectors, globally recognised universities and clear sponsored-worker frameworks.",
+      "image": "",
+      "routes": ["Skilled Worker visa", "Health and Care Worker visa", "Postgraduate study & Graduate Route"],
+      "eligibility": ["An eligible role and licensed sponsor for work routes", "Salary and occupation requirements for the selected route", "English language and financial maintenance evidence", "TB testing, criminal record or care evidence where applicable"],
+      "processes": [
+        { "title": "Occupation & sponsor check", "description": "We check role eligibility, salary thresholds and sponsorship readiness before you commit." },
+        { "title": "Certificate or admission", "description": "Support with Certificate of Sponsorship details or a targeted postgraduate university application." },
+        { "title": "Visa & relocation", "description": "A meticulous visa file, biometrics guidance and practical planning for your UK arrival." }
+      ],
+      "timeline": [
+        { "step": "01", "title": "Check", "duration": "1–2 weeks", "description": "Occupation, sponsor or academic eligibility assessment." },
+        { "step": "02", "title": "Secure", "duration": "4–16 weeks", "description": "Sponsorship documentation or university admission process." },
+        { "step": "03", "title": "Submit", "duration": "Usually 3–8 weeks", "description": "Visa submission, biometrics and standard authority processing." },
+        { "step": "04", "title": "Relocate", "duration": "2–4 weeks", "description": "Travel, accommodation and first-week settlement preparation." }
+      ],
+      "sortOrder": 3
+    },
+    {
+      "id": "country-luxembourg",
+      "slug": "luxembourg",
+      "name": "Luxembourg",
+      "code": "LUX",
+      "flag": "🇱🇺",
+      "tagline": "European access. Remarkable quality of life.",
+      "summary": "A multilingual hub for finance, technology, research and European careers, with routes for highly qualified talent.",
+      "image": "",
+      "routes": ["EU Blue Card", "Salaried worker residence permit", "Research & postgraduate mobility"],
+      "eligibility": ["A qualifying employment contract or research / study offer", "Recognised qualifications and role-appropriate experience", "Salary thresholds for highly qualified routes", "Accommodation, insurance, financial and civil documentation"],
+      "processes": [
+        { "title": "Route & recognition review", "description": "We assess your contract, qualifications and language profile against the appropriate residence route." },
+        { "title": "Temporary authorisation", "description": "Prepare and coordinate the initial immigration authorisation and supporting civil records." },
+        { "title": "Visa & residence formalities", "description": "Guidance through entry visa, arrival declaration, medical checks and residence-card steps." }
+      ],
+      "timeline": [
+        { "step": "01", "title": "Qualify", "duration": "1–2 weeks", "description": "Employment, qualification and residence-route assessment." },
+        { "step": "02", "title": "Authorise", "duration": "Up to 3–4 months", "description": "Temporary authorisation request and ministry processing." },
+        { "step": "03", "title": "Enter", "duration": "2–6 weeks", "description": "Entry visa where required and relocation planning." },
+        { "step": "04", "title": "Register", "duration": "First 90 days", "description": "Local declaration, checks and residence permit formalities." }
+      ],
+      "sortOrder": 4
+    },
+    {
+      "id": "country-australia",
+      "slug": "australia",
+      "name": "Australia",
+      "code": "AUS",
+      "flag": "🇦🇺",
+      "tagline": "Skilled futures. Exceptional living.",
+      "summary": "Points-tested and employer-sponsored skilled routes, respected research degrees and vibrant regional opportunities.",
+      "image": "",
+      "routes": ["Skilled Independent visa (189)", "State Nominated & employer-sponsored visas", "Postgraduate study & research"],
+      "eligibility": ["An eligible occupation and positive skills assessment for skilled routes", "Competent English and age / points requirements where relevant", "State nomination or employer sponsorship for selected pathways", "Health, character and genuine-intention evidence"],
+      "processes": [
+        { "title": "Occupation & points strategy", "description": "We compare skilled, nominated, employer and study options using your experience and long-term goals." },
+        { "title": "Skills assessment & EOI", "description": "Prepare assessing-authority evidence, English results and an accurate Expression of Interest." },
+        { "title": "Invitation & visa decision", "description": "Support with nomination, final visa evidence, health examinations and movement notifications." }
+      ],
+      "timeline": [
+        { "step": "01", "title": "Map", "duration": "1–2 weeks", "description": "Occupation, points and jurisdiction strategy." },
+        { "step": "02", "title": "Assess", "duration": "8–16 weeks", "description": "Skills assessment, English testing and evidence collection." },
+        { "step": "03", "title": "Invite", "duration": "Varies by rounds", "description": "EOI, nomination and invitation monitoring." },
+        { "step": "04", "title": "Finalise", "duration": "Route dependent", "description": "Visa application, health checks and pre-departure planning." }
+      ],
+      "sortOrder": 5
+    }
+  ],
+  "programs": [
+    {
+      "id": "program-masters",
+      "degree": "Master's",
+      "title": "Master's programs",
+      "destination": "USA · Canada · UK · Luxembourg · Australia",
+      "duration": "12–24 months",
+      "description": "Build specialist expertise, international experience and a stronger career profile with a postgraduate degree matched to your ambitions.",
+      "highlights": ["Personalised university and course shortlist", "Statement of purpose and CV development", "Scholarship and funding guidance", "Visa, interview and pre-departure support"],
+      "requirements": ["Recognised bachelor's degree or equivalent", "Academic transcripts and degree certificate", "English proficiency evidence where required", "Statement of purpose, references and academic CV"],
+      "intake": "January & September 2027",
+      "investment": "From USD 14,000 / year",
+      "sortOrder": 1
+    },
+    {
+      "id": "program-phd",
+      "degree": "PhD",
+      "title": "PhD & research programs",
+      "destination": "USA · Canada · UK · Luxembourg · Australia",
+      "duration": "3–5 years",
+      "description": "Find the right supervisor, research environment and funding route for original work that advances your field—and your future.",
+      "highlights": ["Research-topic and supervisor matching", "Research proposal development", "Assistantship and funding application strategy", "Academic interview and visa preparation"],
+      "requirements": ["Relevant Master's degree or strong research-equivalent profile", "Research proposal and academic writing samples", "Academic transcripts, CV and references", "English proficiency and supervisor alignment"],
+      "intake": "Rolling & September 2027",
+      "investment": "Funded and self-funded routes",
+      "sortOrder": 2
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "testimonial-amara",
+      "name": "Amara Okafor",
+      "role": "Registered Nurse · Health & Care pathway",
+      "location": "Port Harcourt to Manchester, UK",
+      "quote": "I had the ambition, but the process felt overwhelming. Redpath turned it into a clear weekly plan—from my documents to my interview. I always knew what was happening and why.",
+      "rating": 5,
+      "mediaType": "image",
+      "mediaUrl": "/images/testimonial-amara.jpg",
+      "posterUrl": "",
+      "sortOrder": 1
+    },
+    {
+      "id": "testimonial-daniel",
+      "name": "Daniel Menon",
+      "role": "Civil Engineer · Skilled worker pathway",
+      "location": "Kochi to Toronto, Canada",
+      "quote": "The honest assessment made all the difference. We improved the parts of my profile I could control, prepared every detail properly and chose a route that worked for my family.",
+      "rating": 5,
+      "mediaType": "image",
+      "mediaUrl": "/images/testimonial-daniel.jpg",
+      "posterUrl": "",
+      "sortOrder": 2
+    },
+    {
+      "id": "testimonial-lena",
+      "name": "Lena Santos",
+      "role": "PhD Researcher · Environmental Science",
+      "location": "Manila to Melbourne, Australia",
+      "quote": "They understood that a PhD application is more than paperwork. My adviser helped me refine my research story, approach supervisors with confidence and see the bigger picture.",
+      "rating": 5,
+      "mediaType": "image",
+      "mediaUrl": "/images/testimonial-lena.jpg",
+      "posterUrl": "",
+      "sortOrder": 3
+    }
+  ],
+  "submissions": []
+}
