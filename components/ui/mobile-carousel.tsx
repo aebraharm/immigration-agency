@@ -11,10 +11,11 @@ interface MobileCarouselProps {
   itemKeys: string[];
   label: string;
   className?: string;
+  tone?: 'light' | 'dark';
 }
 
 /** Native, touch-first carousel used below the Tailwind lg (1024px) breakpoint. */
-export function MobileCarousel({ items, itemLabels, itemKeys, label, className }: MobileCarouselProps) {
+export function MobileCarousel({ items, itemLabels, itemKeys, label, className, tone = 'light' }: MobileCarouselProps) {
   const viewport = useRef<HTMLDivElement>(null);
   const frame = useRef<number | null>(null);
   const [active, setActive] = useState(0);
@@ -114,8 +115,8 @@ export function MobileCarousel({ items, itemLabels, itemKeys, label, className }
         aria-current={active === index ? 'true' : undefined}
         onClick={() => goTo(index)}
         className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-600/20"
-      ><span className={cn('block h-1.5 rounded-full transition-all duration-300', active === index ? 'w-6 bg-red-600' : 'w-1.5 bg-ink-900/25 hover:bg-red-400')} /></button>)}
-      <span aria-hidden="true" className="ml-2 min-w-10 font-mono text-[9px] font-bold tracking-wider text-ink-400">{String(active + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}</span>
+      ><span className={cn('block h-1.5 rounded-full transition-all duration-300', active === index ? 'w-6 bg-red-600' : cn('w-1.5 hover:bg-red-400', tone === 'dark' ? 'bg-white/30' : 'bg-ink-900/25'))} /></button>)}
+      <span aria-hidden="true" className={cn('ml-2 min-w-10 font-mono text-[9px] font-bold tracking-wider', tone === 'dark' ? 'text-white/40' : 'text-ink-400')}>{String(active + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}</span>
     </div>}
   </div>;
 }

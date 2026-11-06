@@ -1,8 +1,9 @@
 {
   "content": {
+    "contentVersion": 2,
     "seo": {
       "title": "Redpath Immigration — Your next chapter, without borders",
-      "description": "Clear, considered immigration guidance for global careers, Master's and PhD study across the USA, Canada, UK, Luxembourg and Australia."
+      "description": "Clear, considered immigration guidance for global careers, Bachelor's (BSc), Master's and PhD study across the USA, Canada, UK, Luxembourg and Australia."
     },
     "brand": {
       "name": "Redpath",
@@ -114,20 +115,20 @@
       "closeLabel": "Close destination details"
     },
     "studySection": {
-      "eyebrow": "MASTER'S & PHD OPPORTUNITIES",
+      "eyebrow": "BACHELOR'S, MASTER'S & PHD OPPORTUNITIES",
       "title": "A degree that takes you",
       "titleAccent": "further.",
-      "description": "From shortlisting research-led universities to preparing a compelling application, we help ambitious graduates turn academic potential into global opportunity.",
+      "description": "From choosing your first undergraduate degree to preparing a postgraduate or research application, we help ambitious students turn academic potential into global opportunity.",
       "image": "/images/study-campus.jpg",
-      "imageAlt": "A doctoral graduate outside a modern international university",
-      "imageCaption": "Research. Community. A global perspective.",
+      "imageAlt": "A university graduate outside a modern international university",
+      "imageCaption": "Learning. Community. A global perspective.",
       "highlightsTitle": "Program highlights",
       "requirementsTitle": "Typical requirements",
       "intakeLabel": "Next intakes",
       "investmentLabel": "Typical tuition",
       "cardCta": "Start a student assessment",
       "partnershipEyebrow": "A WIDER ACADEMIC NETWORK",
-      "partnershipText": "University options across the USA, Canada, UK, Luxembourg and Australia, matched to your academic profile, research interests and budget."
+      "partnershipText": "Undergraduate and postgraduate university options across the USA, Canada, UK, Luxembourg and Australia, matched to your academic profile, goals and budget."
     },
     "testimonialsSection": {
       "eyebrow": "REAL JOURNEYS. REAL PEOPLE.",
@@ -153,7 +154,7 @@
         },
         {
           "question": "Do you support both work and study applications?",
-          "answer": "Yes. Our assessment has dedicated pathways for skilled job applicants and for Master's or PhD candidates. Your consultation and checklist are tailored to the route you select."
+          "answer": "Yes. Our assessment has dedicated pathways for skilled job applicants and for Bachelor's (BSc), Master's or PhD candidates. Your consultation and checklist are tailored to the route you select."
         },
         {
           "question": "How long does the process take?",
@@ -174,7 +175,7 @@
       "description": "Our professional standards and specialist partner network support responsible, jurisdiction-aware immigration guidance."
     },
     "footer": {
-      "description": "Clear, personal guidance for international careers, postgraduate study and life beyond borders.",
+      "description": "Clear, personal guidance for international careers, university study and life beyond borders.",
       "exploreTitle": "Explore",
       "contactTitle": "Start a conversation",
       "legalTitle": "Important information",
@@ -193,7 +194,7 @@
       "jobTitle": "Job Application Form",
       "jobDescription": "For skilled professionals exploring international employment and work-based immigration.",
       "studentTitle": "Student Application Form",
-      "studentDescription": "For Master's and PhD candidates ready to pursue postgraduate study abroad.",
+      "studentDescription": "For Bachelor's (BSc), Master's and PhD candidates ready to pursue university study abroad.",
       "privacyNote": "Your information is encrypted in transit and used only to assess your enquiry. We never sell applicant data.",
       "successTitle": "Your assessment is with us.",
       "successMessage": "Thank you for sharing your journey. An adviser will review your answers and contact you within one business day to arrange your consultation.",
@@ -350,6 +351,7 @@
           "Others"
         ],
         "targetPrograms": [
+          "Bachelor's (BSc)",
           "Master's",
           "PhD"
         ],
@@ -720,6 +722,29 @@
   ],
   "programs": [
     {
+      "id": "program-bachelors",
+      "degree": "Bachelor's (BSc)",
+      "title": "Bachelor's degree programs",
+      "destination": "USA · Canada · UK · Luxembourg · Australia",
+      "duration": "3–4 years",
+      "description": "Begin your international education with an undergraduate degree matched to your interests, academic background and long-term career ambitions.",
+      "highlights": [
+        "Personalised university and course shortlist",
+        "Undergraduate application and personal statement support",
+        "Scholarship and funding guidance",
+        "Visa, interview and pre-departure support"
+      ],
+      "requirements": [
+        "Secondary school certificate or equivalent",
+        "Academic transcripts and predicted or final results",
+        "English proficiency evidence where required",
+        "Personal statement and academic references"
+      ],
+      "intake": "January & September 2027",
+      "investment": "From USD 9,500 / year",
+      "sortOrder": 1
+    },
+    {
       "id": "program-masters",
       "degree": "Master's",
       "title": "Master's programs",
@@ -740,7 +765,7 @@
       ],
       "intake": "January & September 2027",
       "investment": "From USD 14,000 / year",
-      "sortOrder": 1
+      "sortOrder": 2
     },
     {
       "id": "program-phd",
@@ -763,7 +788,7 @@
       ],
       "intake": "Rolling & September 2027",
       "investment": "Funded and self-funded routes",
-      "sortOrder": 2
+      "sortOrder": 3
     }
   ],
   "testimonials": [

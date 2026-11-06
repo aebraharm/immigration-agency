@@ -3,6 +3,7 @@ import { createClient, type Client, type InValue } from '@libsql/client';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { mkdir, readFile, rename, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { runContentMigrations } from './content-migrations';
 import {
   createSeedData, seedAccreditations, seedContent, seedCountries, seedPrograms,
   seedTeamMembers, seedTestimonials,
@@ -48,7 +49,9 @@ function normalizeContent(value: unknown): SiteContent {
   // writes already contain objects. Parse both forms before applying defaults;
   // passing a JSON string to mergeDefaults would incorrectly return seed copy.
   const parsed = typeof value === 'string' ? jsonParse<unknown>(value, {}) : value;
-  return mergeDefaults(seedContent, parsed) as SiteContent;
+  const sourceVersion = isObject(parsed) && typeof parsed.contentVersion === 'number' ? parsed.contentVersion : 0;
+  const merged = mergeDefaults(seedContent, parsed) as SiteContent;
+  return runContentMigrations(merged, sourceVersion);
 }
 
 async function schema() {
