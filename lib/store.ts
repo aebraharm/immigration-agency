@@ -1,7 +1,7 @@
 import 'server-only';
 import { createClient, type Client, type InValue } from '@libsql/client';
 import { randomBytes, randomUUID } from 'node:crypto';
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rename, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { createSeedData, seedContent, seedCountries, seedPrograms, seedTestimonials } from './seed';
 import type {
@@ -9,8 +9,10 @@ import type {
   Submission, SubmissionStatus, SubmissionType, Testimonial,
 } from './types';
 
-const tursoUrl = process.env.TURSO_DATABASE_URL;
-const tursoToken = process.env.TURSO_AUTH_TOKEN;
+const tursoUrl = process.env.TURSO_DATABASE_URL?.trim();
+const tursoToken = process.env.TURSO_AUTH_TOKEN?.trim();
+// Turso is authoritative whenever both variables exist. Live query errors are
+// surfaced rather than silently serving stale preview JSON in production.
 export const storageMode: StorageMode = tursoUrl && tursoToken ? 'turso' : 'preview';
 
 const fallbackPath = process.env.NETLIFY
@@ -39,7 +41,11 @@ function mergeDefaults(defaultValue: unknown, savedValue: unknown): unknown {
 }
 
 function normalizeContent(value: unknown): SiteContent {
-  return mergeDefaults(seedContent, value) as SiteContent;
+  // Turso TEXT columns arrive as strings, while the preview store and admin
+  // writes already contain objects. Parse both forms before applying defaults;
+  // passing a JSON string to mergeDefaults would incorrectly return seed copy.
+  const parsed = typeof value === 'string' ? jsonParse<unknown>(value, {}) : value;
+  return mergeDefaults(seedContent, parsed) as SiteContent;
 }
 
 async function schema() {
@@ -173,6 +179,21 @@ export async function getPublicData(): Promise<PublicData> {
     programs: programResult.rows.map((row) => mapProgram(row as unknown as Record<string, unknown>)),
     testimonials: testimonialResult.rows.map((row) => mapTestimonial(row as unknown as Record<string, unknown>)),
   };
+}
+
+/** A lightweight revision token for live clients; no CMS rows or media are returned. */
+export async function getPublicContentVersion(): Promise<string> {
+  await ready();
+  if (storageMode === 'preview') {
+    try { return String((await stat(fallbackPath)).mtimeMs); } catch { return '0'; }
+  }
+  const result = await client!.execute(`SELECT
+    (SELECT updated_at FROM site_content WHERE id = 1) AS content_stamp,
+    (SELECT COUNT(*) || ':' || COALESCE(MAX(updated_at), '') FROM countries) AS country_stamp,
+    (SELECT COUNT(*) || ':' || COALESCE(MAX(updated_at), '') FROM study_programs) AS program_stamp,
+    (SELECT COUNT(*) || ':' || COALESCE(MAX(updated_at), '') FROM testimonials) AS testimonial_stamp`);
+  const row = result.rows[0];
+  return [row?.content_stamp, row?.country_stamp, row?.program_stamp, row?.testimonial_stamp].map(String).join('|');
 }
 
 export async function getAdminData(): Promise<AdminData> {

@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
+import { invalidatePublicContent, NO_STORE_HEADERS } from '@/lib/cache';
 import { getAdminData, saveContent } from '@/lib/store';
 import { apiError, requireAdmin } from '@/lib/api';
 import type { SiteContent } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
 
 export async function GET() {
   const denied = await requireAdmin(); if (denied) return denied;
-  try { return NextResponse.json(await getAdminData(), { headers: { 'Cache-Control': 'no-store' } }); }
+  try { return NextResponse.json(await getAdminData(), { headers: NO_STORE_HEADERS }); }
   catch (error) { return apiError(error, 'Unable to load CMS data.'); }
 }
 
@@ -20,7 +22,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Required brand, hero, terms and form content must be present.' }, { status: 400 });
     }
     const saved = await saveContent(content);
-    revalidatePath('/', 'page');
-    return NextResponse.json({ content: saved });
+    invalidatePublicContent();
+    return NextResponse.json({ content: saved }, { headers: NO_STORE_HEADERS });
   } catch (error) { return apiError(error, 'Unable to save site content.'); }
 }

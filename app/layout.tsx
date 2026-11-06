@@ -4,6 +4,11 @@ import '@fontsource/dm-serif-display/400.css';
 import './globals.css';
 import { getPublicData } from '@/lib/store';
 
+// Metadata and every page below this layout must read the current CMS record.
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
+
 export async function generateMetadata(): Promise<Metadata> {
   const { content } = await getPublicData();
   return {
