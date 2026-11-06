@@ -9,6 +9,7 @@ import { StudySection } from './study-section';
 import { Testimonials } from './testimonials';
 import { useLivePublicData } from './use-live-public-data';
 import { Button, ButtonLink } from '@/components/ui/button';
+import { MobileCarousel } from '@/components/ui/mobile-carousel';
 import { Modal } from '@/components/ui/modal';
 import { Reveal } from '@/components/ui/reveal';
 import type { PublicData, SubmissionType } from '@/lib/types';
@@ -104,13 +105,23 @@ function TeamSection({ members, content }: { members: PublicData['teamMembers'];
   if (!members.length) return null;
   return <section id="team" aria-labelledby="team-heading" className="scroll-mt-24 border-t border-ink-900/[0.07] bg-[#FBFAFA] py-24 sm:py-28"><div className="container-site">
     <Reveal className="grid gap-6 lg:grid-cols-[1fr_420px] lg:items-end"><div><span className="eyebrow">{c.eyebrow}</span><h2 id="team-heading" className="display-title mt-5 max-w-3xl">{c.title} <em className="text-red-600">{c.titleAccent}</em></h2></div><p className="text-sm leading-7 text-ink-700">{c.description}</p></Reveal>
-    <div className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">{members.map((member, index) => <Reveal key={member.id} delay={index * .06} className="h-full"><article className="group flex h-full flex-col overflow-hidden rounded-[24px] border border-ink-900/[0.09] bg-white shadow-[0_16px_45px_-38px_rgba(34,22,25,.7)] transition duration-300 hover:-translate-y-1 hover:border-red-600/20 hover:shadow-lift">
-      <div className="relative aspect-[4/4.35] overflow-hidden bg-cream"><img src={member.photoUrl} alt={`${member.name}, ${member.role}`} loading="lazy" className="h-full w-full object-cover object-top transition duration-700 group-hover:scale-[1.025]" /><span className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink-950/25 to-transparent" /><span className="absolute bottom-4 left-4 rounded-full border border-white/40 bg-white/85 px-2.5 py-1 font-mono text-[9px] font-bold text-ink-900 backdrop-blur-md">{String(index + 1).padStart(2, '0')}</span></div>
-      <div className="flex flex-1 flex-col p-5 sm:p-6"><p className="text-[9px] font-extrabold uppercase leading-4 tracking-[.12em] text-red-600">{member.role}</p><h3 className="mt-2 font-serif text-[27px] leading-tight text-ink-950">{member.name}</h3><p className="mt-3 text-[11px] leading-[1.75] text-ink-600">{member.bio}</p>
-        {member.credentials.filter(Boolean).length > 0 && <div className="mt-5 flex-1 border-t border-ink-900/[0.08] pt-4"><p className="text-[8px] font-extrabold uppercase tracking-[.14em] text-ink-400">{c.credentialsLabel}</p><ul className="mt-3 space-y-2">{member.credentials.filter(Boolean).map((credential) => <li key={credential} className="flex items-start gap-2 text-[10px] font-semibold leading-4 text-ink-700"><span className="mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600"><Check className="h-2.5 w-2.5" /></span>{credential}</li>)}</ul></div>}
-      </div>
-    </article></Reveal>)}</div>
+    <Reveal className="mt-10 lg:hidden"><MobileCarousel
+      label={`${c.title} ${c.titleAccent}`}
+      itemLabels={members.map((member) => member.name)}
+      itemKeys={members.map((member) => member.id)}
+      items={members.map((member, index) => <TeamMemberCard key={member.id} member={member} index={index} content={c} />)}
+    /></Reveal>
+    <div className="mt-12 hidden gap-5 lg:grid lg:grid-cols-2 xl:grid-cols-4">{members.map((member, index) => <Reveal key={member.id} delay={index * .06} className="h-full"><TeamMemberCard member={member} index={index} content={c} /></Reveal>)}</div>
   </div></section>;
+}
+
+function TeamMemberCard({ member, index, content: c }: { member: PublicData['teamMembers'][number]; index: number; content: Content['teamSection'] }) {
+  return <article className="group flex h-full flex-col overflow-hidden rounded-[24px] border border-ink-900/[0.09] bg-white shadow-[0_16px_45px_-38px_rgba(34,22,25,.7)] transition duration-300 hover:-translate-y-1 hover:border-red-600/20 hover:shadow-lift">
+    <div className="relative aspect-[4/4.35] overflow-hidden bg-cream"><img src={member.photoUrl} alt={`${member.name}, ${member.role}`} loading="lazy" className="h-full w-full object-cover object-top transition duration-700 group-hover:scale-[1.025]" /><span className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink-950/25 to-transparent" /><span className="absolute bottom-4 left-4 rounded-full border border-white/40 bg-white/85 px-2.5 py-1 font-mono text-[9px] font-bold text-ink-900 backdrop-blur-md">{String(index + 1).padStart(2, '0')}</span></div>
+    <div className="flex flex-1 flex-col p-5 sm:p-6"><p className="text-[9px] font-extrabold uppercase leading-4 tracking-[.12em] text-red-600">{member.role}</p><h3 className="mt-2 font-serif text-[27px] leading-tight text-ink-950">{member.name}</h3><p className="mt-3 text-[11px] leading-[1.75] text-ink-600">{member.bio}</p>
+      {member.credentials.filter(Boolean).length > 0 && <div className="mt-5 flex-1 border-t border-ink-900/[0.08] pt-4"><p className="text-[8px] font-extrabold uppercase tracking-[.14em] text-ink-400">{c.credentialsLabel}</p><ul className="mt-3 space-y-2">{member.credentials.filter(Boolean).map((credential) => <li key={credential} className="flex items-start gap-2 text-[10px] font-semibold leading-4 text-ink-700"><span className="mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600"><Check className="h-2.5 w-2.5" /></span>{credential}</li>)}</ul></div>}
+    </div>
+  </article>;
 }
 
 function AccreditationsBanner({ items, content }: { items: PublicData['accreditations']; content: Content }) {
