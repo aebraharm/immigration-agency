@@ -77,13 +77,15 @@ export function SubmissionsManager({ submissions, content, onChange, onToast }: 
 function Stat({ icon: Icon, value, label, accent }: { icon: typeof Users; value: number; label: string; accent?: boolean }) { return <div className="admin-card p-4 sm:p-5"><div className="flex items-center justify-between"><span className={cn('flex h-9 w-9 items-center justify-center rounded-xl', accent ? 'bg-red-600 text-white' : 'bg-red-50 text-red-600')}><Icon className="h-4 w-4" /></span><span className="font-serif text-3xl sm:text-4xl">{value}</span></div><p className="mt-3 text-[10px] font-semibold text-ink-500">{label}</p></div>; }
 function statusStyle(status: SubmissionStatus) { return status === 'new' ? 'border-red-100 bg-red-50 text-red-700' : status === 'contacted' ? 'border-green-100 bg-green-50 text-green-700' : status === 'reviewed' ? 'border-blue-100 bg-blue-50 text-blue-700' : 'border-ink-900/10 bg-cream text-ink-500'; }
 
-const personalKeys = ['fullName', 'dateOfBirth', 'gender', 'nationality', 'maritalStatus', 'hasChildren', 'childrenCount', 'residenceCountry', 'streetAddress', 'city', 'state', 'postalCode', 'countryCode', 'mobile', 'alternativeMobile', 'email'];
+const personalKeys = ['fullName', 'dateOfBirth', 'gender', 'nationality', 'maritalStatus', 'hasChildren', 'childrenCount', 'residenceCountry', 'streetAddress', 'city', 'state', 'postalCode', 'countryCode', 'mobile', 'alternativeCountryCode', 'alternativeMobile', 'email'];
+const legacyCountryCodeKeys = new Set(['countryCode', 'alternativeCountryCode']);
 const passportKeys = ['hasPassport', 'passportNumber', 'passportCity', 'passportIssueDate', 'passportExpiryDate'];
 const disclosureKeys = ['medicalCondition', 'medicalDetails', 'criminalRecord', 'criminalDetails', 'travelHistory', 'travelCountries', 'familyOutside', 'familyCountry', 'licensedExams', 'examDetails'];
 
 function SubmissionDetail({ submission, content, busy, onClose, onStatus, onDelete }: { submission: Submission; content: SiteContent; busy: boolean; onClose: () => void; onStatus: (status: SubmissionStatus) => void; onDelete: () => void }) {
+  const visiblePersonalKeys = personalKeys.filter((key) => !legacyCountryCodeKeys.has(key) || submission.data[key] !== undefined);
   const groups: { title: string; keys: string[] }[] = [
-    { title: content.forms.labels.personalDetails, keys: personalKeys },
+    { title: content.forms.labels.personalDetails, keys: visiblePersonalKeys },
     { title: content.forms.labels.passportDetails, keys: passportKeys },
     ...(submission.type === 'job' ? [
       { title: content.forms.labels.education, keys: ['qualificationLevel', 'institution', 'institutionCountry', 'graduationYear'] },

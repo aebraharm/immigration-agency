@@ -1,6 +1,6 @@
 {
   "content": {
-    "contentVersion": 2,
+    "contentVersion": 3,
     "seo": {
       "title": "Redpath Immigration — Your next chapter, without borders",
       "description": "Clear, considered immigration guidance for global careers, Bachelor's (BSc), Master's and PhD study across the USA, Canada, UK, Luxembourg and Australia."
@@ -265,7 +265,6 @@
         "city": "City",
         "state": "State / Province",
         "postalCode": "Postal code",
-        "countryCode": "Country code",
         "mobile": "Mobile number",
         "alternativeMobile": "Alternative mobile number",
         "email": "Email address",
@@ -322,10 +321,8 @@
         "reviewEmail": "Email",
         "reviewDestination": "Preferred destination",
         "terms": "Terms & conditions agreement",
-        "mobileCountryCode": "Mobile country code",
-        "alternativeMobileCountryCode": "Alternative mobile country code",
-        "mobilePlaceholder": "(555) 012-3456",
-        "alternativeMobilePlaceholder": "(555) 012-3456"
+        "mobilePlaceholder": "+1 (555) 000-0000",
+        "alternativeMobilePlaceholder": "+1 (555) 000-0000"
       },
       "options": {
         "genders": [
@@ -396,16 +393,8 @@
           "Employer sponsorship",
           "Student loan",
           "Still exploring options"
-        ],
-        "countryCodes": [
-          "+1",
-          "+44",
-          "+233",
-          "+234"
         ]
-      },
-      "defaultCountryCode": "+1",
-      "countryCodePlaceholder": "+1"
+      }
     }
   },
   "countries": [
