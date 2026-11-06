@@ -20,7 +20,7 @@ type Tab = 'content' | 'countries' | 'study' | 'team' | 'testimonials' | 'accred
 const tabs: { id: Tab; label: string; description: string; icon: typeof LayoutDashboard }[] = [
   { id: 'content', label: 'Branding & content', description: 'Website copy and settings', icon: Settings2 },
   { id: 'countries', label: 'Countries & processes', description: 'Destinations and pathways', icon: Globe2 },
-  { id: 'study', label: 'Study abroad', description: "Master's and PhD programs", icon: BookOpen },
+  { id: 'study', label: 'Study abroad', description: "BSc, Master's and PhD programs", icon: BookOpen },
   { id: 'team', label: 'Team Members Manager', description: 'Consultants, photos and credentials', icon: UsersRound },
   { id: 'testimonials', label: 'Testimonials', description: 'Client photos and videos', icon: MessageSquareQuote },
   { id: 'accreditations', label: 'Licenses & Accreditations', description: 'Professional badges and trust copy', icon: Award },

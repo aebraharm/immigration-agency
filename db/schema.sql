@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS countries (
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Degree labels are CMS-managed free text, supporting Bachelor's (BSc), Master's, PhD and custom programs.
 CREATE TABLE IF NOT EXISTS study_programs (
   id TEXT PRIMARY KEY,
   degree TEXT NOT NULL,

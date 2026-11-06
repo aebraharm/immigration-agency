@@ -8,6 +8,7 @@ export interface JourneyStep { number: string; title: string; description: strin
 export interface FaqItem { question: string; answer: string }
 
 export interface SiteContent {
+  contentVersion: number;
   seo: { title: string; description: string };
   brand: {
     name: string; legalName: string; tagline: string; logo: string; logoAlt: string;

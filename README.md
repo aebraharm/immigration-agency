@@ -2,7 +2,7 @@
 
 A complete immigration agency website and content-management workspace built with **Next.js App Router, TypeScript, Tailwind CSS, Framer Motion, Netlify and Turso (`@libsql/client`)**.
 
-The project includes a polished public website, structured CMS editing, device media uploads, conditional job and postgraduate assessments, and a private submission-management dashboard. It is seeded with five destinations, Master's/PhD programs, consultant profiles, professional accreditations, testimonials, legal content and all form labels/options.
+The project includes a polished public website, structured CMS editing, device media uploads, conditional job and university-study assessments, and a private submission-management dashboard. It is seeded with five destinations, Bachelor's (BSc)/Master's/PhD programs, consultant profiles, professional accreditations, testimonials, legal content and all form labels/options.
 
 ## Run the application
 
@@ -47,7 +47,9 @@ Add, edit and delete destinations, including imagery, flag, routes, eligibility 
 
 ### Study abroad
 
-Edit the full section introduction and image, then manage any number of Master's, PhD or custom postgraduate programs. Each program supports destination countries, duration, highlights, requirements, intake and tuition/funding guidance.
+Edit the full section introduction and image, then manage any number of Bachelor's (BSc), Master's, PhD or custom university programs. Each program supports destination countries, duration, highlights, requirements, intake and tuition/funding guidance. The editor offers the CMS-managed degree options while retaining custom degree labels. Below 1024px, program cards use the same touch-safe snap carousel as Team Members and Testimonials; the desktop grid is preserved.
+
+Existing installations receive the Bachelor’s program through the idempotent database seed. A versioned content migration upgrades only known original postgraduate-only copy and prepends the missing Bachelor’s assessment option; customized CMS copy and custom degree choices are retained.
 
 ### Team Members Manager
 
@@ -76,7 +78,7 @@ The public **Book a consultation now** buttons open a glassmorphic, dynamic-logo
 
 **Job assessment:** personal/contact details, children conditional logic, passport details, education, current and previous employment, 20 professional skills, language-level matrix, employment preferences, medical/criminal/travel/family/exam disclosures and mandatory terms.
 
-**Student assessment:** personal/contact details, conditional passport details, repeatable education history, Master's/PhD target, destination, course/research field, intake, funding, language proficiency/exams, all disclosures and mandatory terms.
+**Student assessment:** personal/contact details, conditional passport details, repeatable education history, Bachelor's (BSc)/Master's/PhD target, destination, course/research field, intake, funding, language proficiency/exams, all disclosures and mandatory terms.
 
 Both forms use five guided steps, per-step validation, conditional fields, keyboard-accessible dialogs, server-side validation, a honeypot and submission references. Primary and alternative mobile numbers have independent selectable country-code fields preset to **+1**, with CMS-editable code options, labels, defaults and North American number placeholders. The selected alternative country code is included in the submission data.
 
