@@ -82,6 +82,8 @@ export function MobileCarousel({ items, itemLabels, itemKeys, label, className }
   }
 
   if (!items.length) return null;
+  // Native direction detection needs both pan axes on the viewport and every
+  // slide: vertical gestures scroll the page; deliberate horizontal drags scroll cards.
   return <div className={cn('lg:hidden', className)}>
     <div
       ref={viewport}
@@ -91,7 +93,7 @@ export function MobileCarousel({ items, itemLabels, itemKeys, label, className }
       tabIndex={0}
       onScroll={onScroll}
       onKeyDown={onKeyDown}
-      className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-2 touch-pan-x rounded-[24px] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-600/20 [-webkit-overflow-scrolling:touch]"
+      className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-2 rounded-[24px] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-600/20 [-webkit-overflow-scrolling:touch] [touch-action:pan-x_pan-y_pinch-zoom]"
     >
       {items.map((item, index) => <div
         key={itemKeys[index] || index}
@@ -99,7 +101,7 @@ export function MobileCarousel({ items, itemLabels, itemKeys, label, className }
         role="group"
         aria-roledescription="slide"
         aria-label={`${index + 1} / ${items.length}`}
-        className={cn('shrink-0 grow-0 snap-start', multiple ? 'basis-[86%] sm:basis-[47%] md:basis-[42%]' : 'basis-full')}
+        className={cn('shrink-0 grow-0 snap-start [touch-action:pan-x_pan-y_pinch-zoom]', multiple ? 'basis-[86%] sm:basis-[47%] md:basis-[42%]' : 'basis-full')}
       >{item}</div>)}
       {multiple && <div aria-hidden="true" className="shrink-0 grow-0 pointer-events-none basis-[calc(14%_-_1rem)] sm:basis-[calc(53%_-_1rem)] md:basis-[calc(58%_-_1rem)]" />}
     </div>
