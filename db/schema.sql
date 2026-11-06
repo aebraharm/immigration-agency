@@ -55,6 +55,28 @@ CREATE TABLE IF NOT EXISTS testimonials (
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS team_members (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT '',
+  bio TEXT NOT NULL DEFAULT '',
+  credentials TEXT NOT NULL DEFAULT '[]',
+  photo_url TEXT NOT NULL DEFAULT '',
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS accreditations (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  subtitle TEXT NOT NULL DEFAULT '',
+  image_url TEXT NOT NULL DEFAULT '',
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS submissions (
   id TEXT PRIMARY KEY,
   reference TEXT NOT NULL UNIQUE,
@@ -71,3 +93,5 @@ CREATE INDEX IF NOT EXISTS idx_submissions_status ON submissions(status);
 CREATE INDEX IF NOT EXISTS idx_countries_order ON countries(sort_order);
 CREATE INDEX IF NOT EXISTS idx_programs_order ON study_programs(sort_order);
 CREATE INDEX IF NOT EXISTS idx_testimonials_order ON testimonials(sort_order);
+CREATE INDEX IF NOT EXISTS idx_team_members_order ON team_members(sort_order);
+CREATE INDEX IF NOT EXISTS idx_accreditations_order ON accreditations(sort_order);

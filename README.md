@@ -2,7 +2,7 @@
 
 A complete immigration agency website and content-management workspace built with **Next.js App Router, TypeScript, Tailwind CSS, Framer Motion, Netlify and Turso (`@libsql/client`)**.
 
-The project includes a polished public website, structured CMS editing, device media uploads, conditional job and postgraduate assessments, and a private submission-management dashboard. It is seeded with five destinations, Master's/PhD programs, testimonials, legal content and all form labels/options.
+The project includes a polished public website, structured CMS editing, device media uploads, conditional job and postgraduate assessments, and a private submission-management dashboard. It is seeded with five destinations, Master's/PhD programs, consultant profiles, professional accreditations, testimonials, legal content and all form labels/options.
 
 ## Run the application
 
@@ -49,6 +49,14 @@ Add, edit and delete destinations, including imagery, flag, routes, eligibility 
 
 Edit the full section introduction and image, then manage any number of Master's, PhD or custom postgraduate programs. Each program supports destination countries, duration, highlights, requirements, intake and tuition/funding guidance.
 
+### Team Members Manager
+
+Edit the public team-section introduction and add, edit or delete consultant profiles. Each profile supports a professional portrait, name, role, short biography, credentials and display order. Portraits can be uploaded directly from a device and are stored as Base64 data URLs with the CMS record. The public grid is rendered exclusively from these records and disappears if no profiles are published.
+
+### Licenses & Accreditations
+
+Edit the trust-banner introduction and manage the professional badges immediately above the footer. Every accreditation supports an editable title, subtitle, display order and uploaded badge image. SVG, PNG and other browser-supported images are converted to Base64 data URLs on upload; the initial SVG seed artwork is also referenced through ordinary CMS records rather than hardcoded into the public component.
+
 ### Testimonials
 
 Add, edit and delete client stories with ratings, roles and locations. Upload photos, playable videos and optional video poster images directly from a device. Uploads are converted to Base64 data URLs and stored with their CMS record, so no third-party media service is needed.
@@ -70,7 +78,7 @@ The public **Book a consultation now** buttons open a glassmorphic, dynamic-logo
 
 **Student assessment:** personal/contact details, conditional passport details, repeatable education history, Master's/PhD target, destination, course/research field, intake, funding, language proficiency/exams, all disclosures and mandatory terms.
 
-Both forms use five guided steps, per-step validation, conditional fields, keyboard-accessible dialogs, server-side validation, a honeypot and submission references.
+Both forms use five guided steps, per-step validation, conditional fields, keyboard-accessible dialogs, server-side validation, a honeypot and submission references. Primary and alternative mobile numbers have independent selectable country-code fields preset to **+1**, with CMS-editable code options, labels, defaults and North American number placeholders. The selected alternative country code is included in the submission data.
 
 ## Database and preview fallback
 
@@ -108,6 +116,8 @@ The SQL schema contains:
 - `countries`
 - `study_programs`
 - `testimonials`
+- `team_members`
+- `accreditations`
 - `submissions`
 
 `db/seed.json` is the shared source for initial content used by automatic initialization and the standalone seed script.
@@ -134,7 +144,7 @@ Use the resulting URL and token in `.env.local` for `npm run db:init`, and in Ne
 
 ## Media limits
 
-Base64 keeps uploads portable across Turso and the preview store, but serverless platforms impose request/response limits. The UI limits logos to 2 MB, testimonial images to 3 MB and testimonial videos to 4 MB. Compress larger video clips before upload. All uploads render immediately in the editor and persist when the record is saved.
+Base64 keeps uploads portable across Turso and the preview store, but serverless platforms impose request/response limits. The UI limits logos and accreditation badges to 2 MB, consultant portraits and testimonial images to 3 MB, and testimonial videos to 4 MB. Compress larger video clips before upload. All uploads render immediately in the editor and persist when the record is saved.
 
 ## Project structure
 
@@ -154,7 +164,7 @@ netlify.toml               Netlify build/runtime configuration
 ## Live content and cache behavior
 
 - Public pages, metadata and CMS API routes use dynamic rendering, zero revalidation and explicit browser/CDN/Netlify no-store headers.
-- Every successful content, country, program or testimonial mutation immediately expires the shared cache tag and revalidates `/` and `/api/site`.
+- Every successful content, country, program, team-member, accreditation or testimonial mutation immediately expires the shared cache tag and revalidates `/` and `/api/site`.
 - Open public tabs receive an immediate cross-tab notification after an admin save. Focus, browser back/forward cache restoration and ten-second lightweight revision checks provide additional synchronization without repeatedly downloading media.
 - `/api/site/version` returns only a revision token. Full CMS content is fetched only when that token changes.
 - Turso remains authoritative whenever both Turso environment variables are present. Live query errors are surfaced instead of silently serving stale preview JSON.

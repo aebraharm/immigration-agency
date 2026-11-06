@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 
 export function PublicSite({ data: initialData }: { data: PublicData }) {
   const data = useLivePublicData(initialData);
-  const { content, countries, programs, testimonials } = data;
+  const { content, countries, programs, testimonials, teamMembers, accreditations } = data;
   const [consultationOpen, setConsultationOpen] = useState(false);
   const [assessmentType, setAssessmentType] = useState<SubmissionType | null>(null);
   const [legal, setLegal] = useState<'terms' | 'privacy' | null>(null);
@@ -29,9 +29,11 @@ export function PublicSite({ data: initialData }: { data: PublicData }) {
       <Journey content={content} />
       <CountryExplorer countries={countries} content={content} onConsultation={openConsultation} />
       <StudySection programs={programs} content={content} onConsultation={openConsultation} />
+      <TeamSection members={teamMembers} content={content} />
       <Testimonials testimonials={testimonials} content={content} />
       <Faq content={content} />
       <FinalCta content={content} onConsultation={() => openConsultation()} />
+      <AccreditationsBanner items={accreditations} content={content} />
     </main>
     <Footer content={content} onLegal={setLegal} />
     <AssessmentModal open={consultationOpen} onClose={() => setConsultationOpen(false)} content={content} countries={countries} initialType={assessmentType} />
@@ -94,6 +96,29 @@ function Journey({ content }: { content: Content }) {
   return <section id="approach" className="scroll-mt-24 border-t border-ink-900/[0.07] bg-white py-24 sm:py-28"><div className="container-site">
     <Reveal className="grid gap-5 lg:grid-cols-[1fr_420px] lg:items-end"><div><span className="eyebrow">{c.eyebrow}</span><h2 className="display-title mt-5 max-w-3xl">{c.title}</h2></div><p className="text-sm leading-7 text-ink-700">{c.description}</p></Reveal>
     <div className="mt-12 grid gap-px overflow-hidden rounded-[26px] border border-ink-900/10 bg-ink-900/10 sm:grid-cols-2 lg:grid-cols-4">{c.steps.map((step, index) => <Reveal key={step.number} delay={index * .07} className="h-full"><div className="group h-full min-h-[230px] bg-white p-6 transition hover:bg-red-50/40 sm:p-7"><div className="flex items-center justify-between"><span className="font-mono text-[11px] font-bold text-red-600">{step.number}</span><span className="h-px w-10 bg-red-100 transition-all group-hover:w-16 group-hover:bg-red-600" /></div><h3 className="mt-9 font-serif text-3xl text-ink-950">{step.title}</h3><p className="mt-3 text-[11px] leading-6 text-ink-500">{step.description}</p></div></Reveal>)}</div>
+  </div></section>;
+}
+
+function TeamSection({ members, content }: { members: PublicData['teamMembers']; content: Content }) {
+  const c = content.teamSection;
+  if (!members.length) return null;
+  return <section id="team" aria-labelledby="team-heading" className="scroll-mt-24 border-t border-ink-900/[0.07] bg-[#FBFAFA] py-24 sm:py-28"><div className="container-site">
+    <Reveal className="grid gap-6 lg:grid-cols-[1fr_420px] lg:items-end"><div><span className="eyebrow">{c.eyebrow}</span><h2 id="team-heading" className="display-title mt-5 max-w-3xl">{c.title} <em className="text-red-600">{c.titleAccent}</em></h2></div><p className="text-sm leading-7 text-ink-700">{c.description}</p></Reveal>
+    <div className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">{members.map((member, index) => <Reveal key={member.id} delay={index * .06} className="h-full"><article className="group flex h-full flex-col overflow-hidden rounded-[24px] border border-ink-900/[0.09] bg-white shadow-[0_16px_45px_-38px_rgba(34,22,25,.7)] transition duration-300 hover:-translate-y-1 hover:border-red-600/20 hover:shadow-lift">
+      <div className="relative aspect-[4/4.35] overflow-hidden bg-cream"><img src={member.photoUrl} alt={`${member.name}, ${member.role}`} loading="lazy" className="h-full w-full object-cover object-top transition duration-700 group-hover:scale-[1.025]" /><span className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink-950/25 to-transparent" /><span className="absolute bottom-4 left-4 rounded-full border border-white/40 bg-white/85 px-2.5 py-1 font-mono text-[9px] font-bold text-ink-900 backdrop-blur-md">{String(index + 1).padStart(2, '0')}</span></div>
+      <div className="flex flex-1 flex-col p-5 sm:p-6"><p className="text-[9px] font-extrabold uppercase leading-4 tracking-[.12em] text-red-600">{member.role}</p><h3 className="mt-2 font-serif text-[27px] leading-tight text-ink-950">{member.name}</h3><p className="mt-3 text-[11px] leading-[1.75] text-ink-600">{member.bio}</p>
+        {member.credentials.filter(Boolean).length > 0 && <div className="mt-5 flex-1 border-t border-ink-900/[0.08] pt-4"><p className="text-[8px] font-extrabold uppercase tracking-[.14em] text-ink-400">{c.credentialsLabel}</p><ul className="mt-3 space-y-2">{member.credentials.filter(Boolean).map((credential) => <li key={credential} className="flex items-start gap-2 text-[10px] font-semibold leading-4 text-ink-700"><span className="mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600"><Check className="h-2.5 w-2.5" /></span>{credential}</li>)}</ul></div>}
+      </div>
+    </article></Reveal>)}</div>
+  </div></section>;
+}
+
+function AccreditationsBanner({ items, content }: { items: PublicData['accreditations']; content: Content }) {
+  const c = content.accreditationsSection;
+  if (!items.length) return null;
+  return <section id="accreditations" aria-labelledby="accreditations-heading" className="border-b border-ink-900/[0.08] bg-[#FBFAFA] py-16 sm:py-20"><div className="container-site">
+    <Reveal className="grid gap-5 lg:grid-cols-[.8fr_1.2fr] lg:items-end"><div><span className="eyebrow"><ShieldCheck className="h-3.5 w-3.5" />{c.eyebrow}</span><h2 id="accreditations-heading" className="mt-4 max-w-xl font-serif text-3xl leading-tight tracking-[-0.025em] text-ink-950 sm:text-4xl">{c.title}</h2></div><p className="max-w-xl text-xs leading-6 text-ink-600 lg:justify-self-end">{c.description}</p></Reveal>
+    <div className="mt-9 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{items.map((item, index) => <Reveal key={item.id} delay={index * .05} className="h-full"><article className="flex h-full min-h-[174px] flex-col items-center justify-center rounded-2xl border border-ink-900/[0.09] bg-white px-5 py-5 text-center shadow-[0_12px_35px_-32px_rgba(34,22,25,.8)]"><img src={item.imageUrl} alt={item.title} loading="lazy" className="h-[68px] w-full max-w-[210px] object-contain" /><h3 className="mt-3 text-[11px] font-extrabold leading-4 text-ink-950">{item.title}</h3><p className="mt-1 text-[9px] font-medium leading-4 text-ink-500">{item.subtitle}</p></article></Reveal>)}</div>
   </div></section>;
 }
 

@@ -3,10 +3,13 @@ import { createClient, type Client, type InValue } from '@libsql/client';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { mkdir, readFile, rename, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { createSeedData, seedContent, seedCountries, seedPrograms, seedTestimonials } from './seed';
+import {
+  createSeedData, seedAccreditations, seedContent, seedCountries, seedPrograms,
+  seedTeamMembers, seedTestimonials,
+} from './seed';
 import type {
-  AdminData, Country, PublicData, SiteContent, StorageMode, StudyProgram,
-  Submission, SubmissionStatus, SubmissionType, Testimonial,
+  Accreditation, AdminData, Country, PublicData, SiteContent, StorageMode, StudyProgram,
+  Submission, SubmissionStatus, SubmissionType, TeamMember, Testimonial,
 } from './types';
 
 const tursoUrl = process.env.TURSO_DATABASE_URL?.trim();
@@ -85,6 +88,18 @@ async function seedTurso(db: Client) {
       args: [item.id, item.name, item.role, item.location, item.quote, item.rating, item.mediaType, item.mediaUrl, item.posterUrl, item.sortOrder, now],
     });
   }
+  for (const item of seedTeamMembers) {
+    await db.execute({
+      sql: `INSERT OR IGNORE INTO team_members (id, name, role, bio, credentials, photo_url, sort_order, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [item.id, item.name, item.role, item.bio, JSON.stringify(item.credentials), item.photoUrl, item.sortOrder, now],
+    });
+  }
+  for (const item of seedAccreditations) {
+    await db.execute({
+      sql: `INSERT OR IGNORE INTO accreditations (id, title, subtitle, image_url, sort_order, updated_at) VALUES (?, ?, ?, ?, ?, ?)`,
+      args: [item.id, item.title, item.subtitle, item.imageUrl, item.sortOrder, now],
+    });
+  }
 }
 
 async function initialize() {
@@ -106,7 +121,13 @@ async function readFallback(): Promise<AdminData> {
   await ready();
   try {
     const data = JSON.parse(await readFile(fallbackPath, 'utf8')) as AdminData;
-    return { ...data, content: normalizeContent(data.content), storageMode: 'preview' };
+    return {
+      ...data,
+      content: normalizeContent(data.content),
+      teamMembers: Array.isArray(data.teamMembers) ? data.teamMembers : structuredClone(seedTeamMembers),
+      accreditations: Array.isArray(data.accreditations) ? data.accreditations : structuredClone(seedAccreditations),
+      storageMode: 'preview',
+    };
   } catch {
     await seedFallback();
     return createSeedData();
@@ -151,6 +172,21 @@ function mapTestimonial(row: Record<string, unknown>): Testimonial {
   };
 }
 
+function mapTeamMember(row: Record<string, unknown>): TeamMember {
+  return {
+    id: String(row.id), name: String(row.name), role: String(row.role || ''), bio: String(row.bio || ''),
+    credentials: jsonParse(row.credentials, []), photoUrl: String(row.photo_url || ''),
+    sortOrder: Number(row.sort_order || 0),
+  };
+}
+
+function mapAccreditation(row: Record<string, unknown>): Accreditation {
+  return {
+    id: String(row.id), title: String(row.title), subtitle: String(row.subtitle || ''),
+    imageUrl: String(row.image_url || ''), sortOrder: Number(row.sort_order || 0),
+  };
+}
+
 function mapSubmission(row: Record<string, unknown>): Submission {
   return {
     id: String(row.id), reference: String(row.reference), type: row.type === 'student' ? 'student' : 'job',
@@ -163,21 +199,25 @@ function mapSubmission(row: Record<string, unknown>): Submission {
 export async function getPublicData(): Promise<PublicData> {
   await ready();
   if (storageMode === 'preview') {
-    const { content, countries, programs, testimonials } = await readFallback();
-    return { content, countries, programs, testimonials };
+    const { content, countries, programs, testimonials, teamMembers, accreditations } = await readFallback();
+    return { content, countries, programs, testimonials, teamMembers, accreditations };
   }
   const db = client!;
-  const [contentResult, countryResult, programResult, testimonialResult] = await Promise.all([
+  const [contentResult, countryResult, programResult, testimonialResult, teamResult, accreditationResult] = await Promise.all([
     db.execute('SELECT data FROM site_content WHERE id = 1'),
     db.execute('SELECT * FROM countries ORDER BY sort_order ASC, name ASC'),
     db.execute('SELECT * FROM study_programs ORDER BY sort_order ASC, title ASC'),
     db.execute('SELECT * FROM testimonials ORDER BY sort_order ASC, created_at DESC'),
+    db.execute('SELECT * FROM team_members ORDER BY sort_order ASC, name ASC'),
+    db.execute('SELECT * FROM accreditations ORDER BY sort_order ASC, title ASC'),
   ]);
   return {
     content: normalizeContent(contentResult.rows[0]?.data),
     countries: countryResult.rows.map((row) => mapCountry(row as unknown as Record<string, unknown>)),
     programs: programResult.rows.map((row) => mapProgram(row as unknown as Record<string, unknown>)),
     testimonials: testimonialResult.rows.map((row) => mapTestimonial(row as unknown as Record<string, unknown>)),
+    teamMembers: teamResult.rows.map((row) => mapTeamMember(row as unknown as Record<string, unknown>)),
+    accreditations: accreditationResult.rows.map((row) => mapAccreditation(row as unknown as Record<string, unknown>)),
   };
 }
 
@@ -191,9 +231,11 @@ export async function getPublicContentVersion(): Promise<string> {
     (SELECT updated_at FROM site_content WHERE id = 1) AS content_stamp,
     (SELECT COUNT(*) || ':' || COALESCE(MAX(updated_at), '') FROM countries) AS country_stamp,
     (SELECT COUNT(*) || ':' || COALESCE(MAX(updated_at), '') FROM study_programs) AS program_stamp,
-    (SELECT COUNT(*) || ':' || COALESCE(MAX(updated_at), '') FROM testimonials) AS testimonial_stamp`);
+    (SELECT COUNT(*) || ':' || COALESCE(MAX(updated_at), '') FROM testimonials) AS testimonial_stamp,
+    (SELECT COUNT(*) || ':' || COALESCE(MAX(updated_at), '') FROM team_members) AS team_stamp,
+    (SELECT COUNT(*) || ':' || COALESCE(MAX(updated_at), '') FROM accreditations) AS accreditation_stamp`);
   const row = result.rows[0];
-  return [row?.content_stamp, row?.country_stamp, row?.program_stamp, row?.testimonial_stamp].map(String).join('|');
+  return [row?.content_stamp, row?.country_stamp, row?.program_stamp, row?.testimonial_stamp, row?.team_stamp, row?.accreditation_stamp].map(String).join('|');
 }
 
 export async function getAdminData(): Promise<AdminData> {
@@ -278,6 +320,50 @@ export async function deleteTestimonial(id: string) {
   if (storageMode === 'preview') return mutateFallback((data) => { data.testimonials = data.testimonials.filter((item) => item.id !== id); });
   await ready();
   await client!.execute({ sql: 'DELETE FROM testimonials WHERE id = ?', args: [id] });
+}
+
+export async function saveTeamMember(input: TeamMember) {
+  const item = { ...input, id: input.id || `team-${randomUUID()}`, sortOrder: Number(input.sortOrder) || 0 };
+  if (storageMode === 'preview') return mutateFallback((data) => {
+    const index = data.teamMembers.findIndex((entry) => entry.id === item.id);
+    if (index >= 0) data.teamMembers[index] = item; else data.teamMembers.push(item);
+    data.teamMembers.sort((a, b) => a.sortOrder - b.sortOrder);
+    return item;
+  });
+  await ready();
+  await client!.execute({
+    sql: `INSERT INTO team_members (id, name, role, bio, credentials, photo_url, sort_order, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET name=excluded.name, role=excluded.role, bio=excluded.bio, credentials=excluded.credentials, photo_url=excluded.photo_url, sort_order=excluded.sort_order, updated_at=excluded.updated_at`,
+    args: [item.id, item.name, item.role, item.bio, JSON.stringify(item.credentials), item.photoUrl, item.sortOrder, new Date().toISOString()],
+  });
+  return item;
+}
+
+export async function deleteTeamMember(id: string) {
+  if (storageMode === 'preview') return mutateFallback((data) => { data.teamMembers = data.teamMembers.filter((item) => item.id !== id); });
+  await ready();
+  await client!.execute({ sql: 'DELETE FROM team_members WHERE id = ?', args: [id] });
+}
+
+export async function saveAccreditation(input: Accreditation) {
+  const item = { ...input, id: input.id || `accreditation-${randomUUID()}`, sortOrder: Number(input.sortOrder) || 0 };
+  if (storageMode === 'preview') return mutateFallback((data) => {
+    const index = data.accreditations.findIndex((entry) => entry.id === item.id);
+    if (index >= 0) data.accreditations[index] = item; else data.accreditations.push(item);
+    data.accreditations.sort((a, b) => a.sortOrder - b.sortOrder);
+    return item;
+  });
+  await ready();
+  await client!.execute({
+    sql: `INSERT INTO accreditations (id, title, subtitle, image_url, sort_order, updated_at) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET title=excluded.title, subtitle=excluded.subtitle, image_url=excluded.image_url, sort_order=excluded.sort_order, updated_at=excluded.updated_at`,
+    args: [item.id, item.title, item.subtitle, item.imageUrl, item.sortOrder, new Date().toISOString()],
+  });
+  return item;
+}
+
+export async function deleteAccreditation(id: string) {
+  if (storageMode === 'preview') return mutateFallback((data) => { data.accreditations = data.accreditations.filter((item) => item.id !== id); });
+  await ready();
+  await client!.execute({ sql: 'DELETE FROM accreditations WHERE id = ?', args: [id] });
 }
 
 function reference(type: SubmissionType) {
