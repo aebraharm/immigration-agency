@@ -12,7 +12,7 @@ export async function adminFetch<T = any>(url: string, options?: RequestInit): P
   if (!response.ok) throw new Error(result.error || 'The request could not be completed.');
 
   const method = (options?.method || 'GET').toUpperCase();
-  const changesPublicContent = /^\/api\/admin\/(content|countries|programs|testimonials)(\/|$)/.test(url);
+  const changesPublicContent = /^\/api\/admin\/(content|countries|programs|testimonials|team|accreditations)(\/|$)/.test(url);
   if (method !== 'GET' && changesPublicContent) broadcastCmsUpdate();
   return result as T;
 }

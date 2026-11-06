@@ -14,15 +14,18 @@ type EducationEntry = { qualification: string; institution: string; institutionC
 
 const blankEducation: EducationEntry = { qualification: '', institution: '', institutionCountry: '', graduationYear: '', grade: '' };
 const disclosureDefaults = { medicalCondition: null, medicalDetails: '', criminalRecord: null, criminalDetails: '', travelHistory: null, travelCountries: '', familyOutside: null, familyCountry: '', licensedExams: null, examDetails: '' };
-const personalDefaults = {
-  fullName: '', dateOfBirth: '', gender: '', nationality: '', residenceCountry: '', streetAddress: '', city: '', state: '', postalCode: '',
-  countryCode: '', mobile: '', alternativeMobile: '', email: '', maritalStatus: '', hasChildren: null, childrenCount: '',
-};
+function personalDefaults(defaultCountryCode: string) {
+  return {
+    fullName: '', dateOfBirth: '', gender: '', nationality: '', residenceCountry: '', streetAddress: '', city: '', state: '', postalCode: '',
+    countryCode: defaultCountryCode, mobile: '', alternativeCountryCode: defaultCountryCode, alternativeMobile: '',
+    email: '', maritalStatus: '', hasChildren: null, childrenCount: '',
+  };
+}
 const passportDefaults = { hasPassport: null, passportNumber: '', passportCity: '', passportIssueDate: '', passportExpiryDate: '' };
 const languageDefaults = { languages: {} as Record<string, string> };
 
-function initialData(type: SubmissionType): AssessmentData {
-  const shared = { ...personalDefaults, ...passportDefaults, ...disclosureDefaults, ...languageDefaults, terms: false };
+function initialData(type: SubmissionType, defaultCountryCode = '+1'): AssessmentData {
+  const shared = { ...personalDefaults(defaultCountryCode), ...passportDefaults, ...disclosureDefaults, ...languageDefaults, terms: false };
   if (type === 'job') return {
     ...shared, qualificationLevel: '', institution: '', institutionCountry: '', graduationYear: '',
     hasCurrentEmployment: null, currentEmployer: '', currentPosition: '', currentEmploymentCountry: '', employmentStartDate: '', monthlySalary: '',
@@ -42,7 +45,6 @@ interface Props {
 export function AssessmentModal({ open, onClose, content, countries, initialType }: Props) {
   const [type, setType] = useState<'choose' | SubmissionType>('choose');
   const [step, setStep] = useState(0);
-  const [data, setData] = useState<AssessmentData>(() => initialData('job'));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState('');
@@ -50,14 +52,17 @@ export function AssessmentModal({ open, onClose, content, countries, initialType
   const top = useRef<HTMLDivElement>(null);
   const c = content.consultation;
   const f = content.forms;
+  const defaultCountryCode = f.defaultCountryCode || '+1';
+  const countryCodeOptions = Array.from(new Set([defaultCountryCode, ...(f.options.countryCodes || [])]));
+  const [data, setData] = useState<AssessmentData>(() => initialData('job', defaultCountryCode));
   const L = useCallback((key: string) => f.labels[key] || key, [f.labels]);
 
   useEffect(() => {
     if (!open) return;
     const nextType = initialType || 'choose';
-    setType(nextType); setStep(0); setData(initialData(initialType || 'job'));
+    setType(nextType); setStep(0); setData(initialData(initialType || 'job', defaultCountryCode));
     setErrors({}); setServerError(''); setReference(''); setSubmitting(false);
-  }, [open, initialType]);
+  }, [open, initialType, defaultCountryCode]);
 
   const update = (key: string, value: unknown) => {
     setData((current) => ({ ...current, [key]: value }));
@@ -170,11 +175,14 @@ export function AssessmentModal({ open, onClose, content, countries, initialType
           <Input label={L('city')} required value={data.city} error={errors.city} onChange={(e) => update('city', e.target.value)} autoComplete="address-level2" />
           <Input label={L('state')} required value={data.state} error={errors.state} onChange={(e) => update('state', e.target.value)} autoComplete="address-level1" />
           <Input label={L('postalCode')} required value={data.postalCode} error={errors.postalCode} onChange={(e) => update('postalCode', e.target.value)} autoComplete="postal-code" />
-          <div className="grid grid-cols-[110px_1fr] gap-3">
-            <Input label={L('countryCode')} required value={data.countryCode} error={errors.countryCode} onChange={(e) => update('countryCode', e.target.value)} placeholder="+234" inputMode="tel" />
-            <Input label={L('mobile')} required value={data.mobile} error={errors.mobile} onChange={(e) => update('mobile', e.target.value)} type="tel" autoComplete="tel" />
+          <div className="grid grid-cols-[104px_1fr] gap-3 sm:grid-cols-[118px_1fr]">
+            <Select label={L('mobileCountryCode')} required value={data.countryCode} error={errors.countryCode} onChange={(e) => update('countryCode', e.target.value)} placeholder={f.countryCodePlaceholder} options={countryCodeOptions} autoComplete="tel-country-code" />
+            <Input label={L('mobile')} required value={data.mobile} error={errors.mobile} onChange={(e) => update('mobile', e.target.value)} type="tel" autoComplete="tel-national" placeholder={L('mobilePlaceholder')} />
           </div>
-          <Input label={L('alternativeMobile')} optional={f.optional} value={data.alternativeMobile} onChange={(e) => update('alternativeMobile', e.target.value)} type="tel" />
+          <div className="grid grid-cols-[104px_1fr] gap-3 sm:grid-cols-[118px_1fr]">
+            <Select label={L('alternativeMobileCountryCode')} value={data.alternativeCountryCode} onChange={(e) => update('alternativeCountryCode', e.target.value)} placeholder={f.countryCodePlaceholder} options={countryCodeOptions} autoComplete="tel-country-code" />
+            <Input label={L('alternativeMobile')} optional={f.optional} value={data.alternativeMobile} onChange={(e) => update('alternativeMobile', e.target.value)} type="tel" autoComplete="tel-national" placeholder={L('alternativeMobilePlaceholder')} />
+          </div>
           <Input label={L('email')} required value={data.email} error={errors.email} onChange={(e) => update('email', e.target.value)} type="email" autoComplete="email" />
         </div>
       </FormSection>
@@ -404,7 +412,7 @@ export function AssessmentModal({ open, onClose, content, countries, initialType
             {([
               { id: 'job' as const, title: c.jobTitle, description: c.jobDescription, icon: BriefcaseBusiness },
               { id: 'student' as const, title: c.studentTitle, description: c.studentDescription, icon: GraduationCap },
-            ]).map((option) => <button key={option.id} type="button" onClick={() => { setType(option.id); setData(initialData(option.id)); setStep(0); }} className="btn group relative flex min-h-[220px] flex-col items-start rounded-3xl border border-ink-900/10 bg-white p-6 text-left shadow-card hover:-translate-y-1 hover:border-red-600/40 hover:shadow-lift sm:p-7">
+            ]).map((option) => <button key={option.id} type="button" onClick={() => { setType(option.id); setData(initialData(option.id, defaultCountryCode)); setStep(0); }} className="btn group relative flex min-h-[220px] flex-col items-start rounded-3xl border border-ink-900/10 bg-white p-6 text-left shadow-card hover:-translate-y-1 hover:border-red-600/40 hover:shadow-lift sm:p-7">
               <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-600 transition group-hover:bg-red-600 group-hover:text-white"><option.icon className="h-6 w-6" /></span>
               <span className="mt-6 text-lg font-extrabold tracking-tight">{option.title}</span>
               <span className="mt-2 text-xs leading-6 text-ink-500 group-hover:text-white/80">{option.description}</span>

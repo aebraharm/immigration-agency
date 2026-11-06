@@ -21,6 +21,9 @@ export interface SiteContent {
     stats: Stat[];
   };
   journey: { eyebrow: string; title: string; description: string; steps: JourneyStep[] };
+  teamSection: {
+    eyebrow: string; title: string; titleAccent: string; description: string; credentialsLabel: string;
+  };
   countriesSection: {
     eyebrow: string; title: string; titleAccent: string; description: string;
     cardCta: string; routesTitle: string; processTitle: string; eligibilityTitle: string;
@@ -38,6 +41,7 @@ export interface SiteContent {
   };
   faqSection: { eyebrow: string; title: string; description: string; items: FaqItem[] };
   finalCta: { eyebrow: string; title: string; description: string; button: string; note: string };
+  accreditationsSection: { eyebrow: string; title: string; description: string };
   footer: {
     description: string; exploreTitle: string; contactTitle: string; legalTitle: string;
     legalText: string; privacyText: string; privacyLabel: string; termsLabel: string; copyright: string;
@@ -54,11 +58,12 @@ export interface SiteContent {
     yes: string; no: string; optional: string; required: string; next: string; back: string;
     submit: string; submitting: string; close: string; selectPlaceholder: string;
     addEducation: string; removeEducation: string; validationMessage: string;
+    defaultCountryCode: string; countryCodePlaceholder: string;
     labels: Record<string, string>;
     options: {
       genders: string[]; maritalStatuses: string[]; qualifications: string[];
       targetPrograms: string[]; skills: string[]; languages: string[]; levels: string[];
-      fundingPlans: string[];
+      fundingPlans: string[]; countryCodes: string[];
     };
   };
 }
@@ -83,6 +88,15 @@ export interface Testimonial {
   sortOrder: number;
 }
 
+export interface TeamMember {
+  id: string; name: string; role: string; bio: string; credentials: string[];
+  photoUrl: string; sortOrder: number;
+}
+
+export interface Accreditation {
+  id: string; title: string; subtitle: string; imageUrl: string; sortOrder: number;
+}
+
 export interface Submission {
   id: string; reference: string; type: SubmissionType; fullName: string; email: string;
   data: Record<string, unknown>; status: SubmissionStatus; createdAt: string;
@@ -90,7 +104,7 @@ export interface Submission {
 
 export interface PublicData {
   content: SiteContent; countries: Country[]; programs: StudyProgram[];
-  testimonials: Testimonial[];
+  testimonials: Testimonial[]; teamMembers: TeamMember[]; accreditations: Accreditation[];
 }
 
 export interface AdminData extends PublicData {

@@ -37,7 +37,13 @@ for (const item of seed.programs) {
 for (const item of seed.testimonials) {
   await db.execute({ sql: 'INSERT OR IGNORE INTO testimonials (id, name, role, location, quote, rating, media_type, media_url, poster_url, sort_order, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', args: [item.id, item.name, item.role, item.location, item.quote, item.rating, item.mediaType, item.mediaUrl, item.posterUrl, item.sortOrder, now] });
 }
-const tables = ['site_content', 'countries', 'study_programs', 'testimonials', 'submissions'];
+for (const item of seed.teamMembers) {
+  await db.execute({ sql: 'INSERT OR IGNORE INTO team_members (id, name, role, bio, credentials, photo_url, sort_order, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', args: [item.id, item.name, item.role, item.bio, JSON.stringify(item.credentials), item.photoUrl, item.sortOrder, now] });
+}
+for (const item of seed.accreditations) {
+  await db.execute({ sql: 'INSERT OR IGNORE INTO accreditations (id, title, subtitle, image_url, sort_order, updated_at) VALUES (?, ?, ?, ?, ?, ?)', args: [item.id, item.title, item.subtitle, item.imageUrl, item.sortOrder, now] });
+}
+const tables = ['site_content', 'countries', 'study_programs', 'testimonials', 'team_members', 'accreditations', 'submissions'];
 for (const table of tables) {
   const result = await db.execute(`SELECT COUNT(*) AS count FROM ${table}`);
   console.log(`✓ ${table}: ${result.rows[0].count} records`);
