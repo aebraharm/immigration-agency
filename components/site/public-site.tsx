@@ -7,13 +7,15 @@ import { AssessmentModal } from './assessment-modal';
 import { CountryExplorer } from './country-explorer';
 import { StudySection } from './study-section';
 import { Testimonials } from './testimonials';
+import { useLivePublicData } from './use-live-public-data';
 import { Button, ButtonLink } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
 import { Reveal } from '@/components/ui/reveal';
 import type { PublicData, SubmissionType } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
-export function PublicSite({ data }: { data: PublicData }) {
+export function PublicSite({ data: initialData }: { data: PublicData }) {
+  const data = useLivePublicData(initialData);
   const { content, countries, programs, testimonials } = data;
   const [consultationOpen, setConsultationOpen] = useState(false);
   const [assessmentType, setAssessmentType] = useState<SubmissionType | null>(null);

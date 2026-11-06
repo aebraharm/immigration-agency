@@ -151,9 +151,18 @@ public/images/             Initial editorial imagery
 netlify.toml               Netlify build/runtime configuration
 ```
 
+## Live content and cache behavior
+
+- Public pages, metadata and CMS API routes use dynamic rendering, zero revalidation and explicit browser/CDN/Netlify no-store headers.
+- Every successful content, country, program or testimonial mutation immediately expires the shared cache tag and revalidates `/` and `/api/site`.
+- Open public tabs receive an immediate cross-tab notification after an admin save. Focus, browser back/forward cache restoration and ten-second lightweight revision checks provide additional synchronization without repeatedly downloading media.
+- `/api/site/version` returns only a revision token. Full CMS content is fetched only when that token changes.
+- Turso remains authoritative whenever both Turso environment variables are present. Live query errors are surfaced instead of silently serving stale preview JSON.
+- Turso JSON text is parsed before default values are merged, ensuring saved site settings are returned instead of the original seed copy.
+
 ## Operational notes
 
-- Public pages are dynamically rendered so saved CMS changes appear without a rebuild.
+- Public pages are dynamically rendered so saved CMS changes appear without a rebuild or manual browser refresh.
 - Admin APIs reject unauthenticated requests; the admin page itself is marked `noindex`.
 - The preview store uses atomic writes and a local mutation queue.
 - Turso seed operations use `INSERT OR IGNORE`, so rerunning initialization does not overwrite live content.

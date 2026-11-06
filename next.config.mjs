@@ -10,6 +10,14 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: '/',
+        headers: [
+          { key: 'Cache-Control', value: 'private, no-store, no-cache, max-age=0, must-revalidate' },
+          { key: 'CDN-Cache-Control', value: 'no-store, max-age=0' },
+          { key: 'Netlify-CDN-Cache-Control', value: 'no-store, max-age=0' },
+        ],
+      },
+      {
         source: '/(.*)',
         headers: [
           { key: 'X-Content-Type-Options', value: 'nosniff' },
