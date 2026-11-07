@@ -5,6 +5,7 @@ import { ArrowRight, ArrowUpRight, Check, CheckCircle2, Clock3, MapPin, Route } 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
+import { MobileScrollScene } from '@/components/ui/mobile-scroll-scene';
 import { Reveal } from '@/components/ui/reveal';
 import type { Country, SiteContent, SubmissionType } from '@/lib/types';
 
@@ -12,7 +13,7 @@ export function CountryExplorer({ countries, content, onConsultation }: { countr
   const [selected, setSelected] = useState<Country | null>(null);
   const c = content.countriesSection;
   return <section id="destinations" className="scroll-mt-24 bg-cream py-24 sm:py-28 lg:py-32">
-    <div className="container-site">
+    <MobileScrollScene name="destinations" className="container-site">
       <Reveal className="grid items-end gap-6 lg:grid-cols-[1fr_420px]">
         <div><span className="eyebrow"><MapPin className="h-3.5 w-3.5" />{c.eyebrow}</span>
           <h2 className="display-title mt-5 max-w-3xl">{c.title} <em className="text-red-600">{c.titleAccent}</em></h2>
@@ -31,7 +32,7 @@ export function CountryExplorer({ countries, content, onConsultation }: { countr
           </motion.button>
         </Reveal>)}
       </div>
-    </div>
+    </MobileScrollScene>
 
     <Modal open={Boolean(selected)} onClose={() => setSelected(null)} label={selected?.name || c.title} closeLabel={c.closeLabel} className="max-w-5xl">
       {selected && <div>

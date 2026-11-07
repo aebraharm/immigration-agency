@@ -10,6 +10,7 @@ import { Testimonials } from './testimonials';
 import { useLivePublicData } from './use-live-public-data';
 import { Button, ButtonLink } from '@/components/ui/button';
 import { MobileCarousel } from '@/components/ui/mobile-carousel';
+import { MobileScrollScene } from '@/components/ui/mobile-scroll-scene';
 import { Modal } from '@/components/ui/modal';
 import { Reveal } from '@/components/ui/reveal';
 import type { PublicData, SubmissionType } from '@/lib/types';
@@ -72,7 +73,7 @@ function Hero({ content, onConsultation }: { content: Content; onConsultation: (
   const c = content.hero;
   return <section className="relative overflow-hidden bg-red-radial pb-20 pt-32 sm:pt-36 lg:pb-24 lg:pt-[150px]">
     <div className="pointer-events-none absolute left-0 top-28 h-52 w-52 rounded-full bg-red-100/40 blur-[90px]" />
-    <div className="container-site relative grid items-center gap-14 lg:grid-cols-[1.06fr_.94fr] lg:gap-16">
+    <MobileScrollScene name="hero" className="container-site relative grid items-center gap-14 lg:grid-cols-[1.06fr_.94fr] lg:gap-16">
       <motion.div initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7, ease: [0.22, 1, 0.36, 1] }}>
         <span className="eyebrow rounded-full border border-red-100 bg-red-50/60 px-3.5 py-2"><Sparkles className="h-3.5 w-3.5" />{c.eyebrow}</span>
         <h1 className="mt-7 max-w-3xl font-serif text-[52px] leading-[.99] tracking-[-0.035em] text-ink-950 sm:text-[70px] lg:text-[76px] xl:text-[84px]">{c.title}<br /><em className="text-red-600">{c.titleAccent}</em></h1>
@@ -88,7 +89,7 @@ function Hero({ content, onConsultation }: { content: Content; onConsultation: (
           <motion.div animate={{ y: [0, -7, 0] }} transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }} className="glass absolute bottom-5 left-4 right-4 rounded-[22px] p-5 sm:bottom-7 sm:left-6 sm:right-6 sm:p-6"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-600 text-white"><Check className="h-4 w-4" /></span><p className="mt-4 font-serif text-[23px] leading-tight text-ink-950 sm:text-[27px]">{c.imageCardTitle}</p><p className="mt-2 text-[10px] leading-5 text-ink-700 sm:text-[11px]">{c.imageCardText}</p></motion.div>
         </div>
       </motion.div>
-    </div>
+    </MobileScrollScene>
   </section>;
 }
 
@@ -103,7 +104,7 @@ function Journey({ content }: { content: Content }) {
 function TeamSection({ members, content }: { members: PublicData['teamMembers']; content: Content }) {
   const c = content.teamSection;
   if (!members.length) return null;
-  return <section id="team" aria-labelledby="team-heading" className="scroll-mt-24 border-t border-ink-900/[0.07] bg-[#FBFAFA] py-24 sm:py-28"><div className="container-site">
+  return <section id="team" aria-labelledby="team-heading" className="scroll-mt-24 border-t border-ink-900/[0.07] bg-[#FBFAFA] py-24 sm:py-28"><MobileScrollScene name="team" className="container-site">
     <Reveal className="grid gap-6 lg:grid-cols-[1fr_420px] lg:items-end"><div><span className="eyebrow">{c.eyebrow}</span><h2 id="team-heading" className="display-title mt-5 max-w-3xl">{c.title} <em className="text-red-600">{c.titleAccent}</em></h2></div><p className="text-sm leading-7 text-ink-700">{c.description}</p></Reveal>
     <Reveal className="mt-10 lg:hidden"><MobileCarousel
       label={`${c.title} ${c.titleAccent}`}
@@ -112,7 +113,7 @@ function TeamSection({ members, content }: { members: PublicData['teamMembers'];
       items={members.map((member, index) => <TeamMemberCard key={member.id} member={member} index={index} content={c} />)}
     /></Reveal>
     <div className="mt-12 hidden gap-5 lg:grid lg:grid-cols-2 xl:grid-cols-4">{members.map((member, index) => <Reveal key={member.id} delay={index * .06} className="h-full"><TeamMemberCard member={member} index={index} content={c} /></Reveal>)}</div>
-  </div></section>;
+  </MobileScrollScene></section>;
 }
 
 function TeamMemberCard({ member, index, content: c }: { member: PublicData['teamMembers'][number]; index: number; content: Content['teamSection'] }) {
@@ -127,10 +128,10 @@ function TeamMemberCard({ member, index, content: c }: { member: PublicData['tea
 function AccreditationsBanner({ items, content }: { items: PublicData['accreditations']; content: Content }) {
   const c = content.accreditationsSection;
   if (!items.length) return null;
-  return <section id="accreditations" aria-labelledby="accreditations-heading" className="border-b border-ink-900/[0.08] bg-[#FBFAFA] py-16 sm:py-20"><div className="container-site">
+  return <section id="accreditations" aria-labelledby="accreditations-heading" className="border-b border-ink-900/[0.08] bg-[#FBFAFA] py-16 sm:py-20"><MobileScrollScene name="accreditations" className="container-site">
     <Reveal className="grid gap-5 lg:grid-cols-[.8fr_1.2fr] lg:items-end"><div><span className="eyebrow"><ShieldCheck className="h-3.5 w-3.5" />{c.eyebrow}</span><h2 id="accreditations-heading" className="mt-4 max-w-xl font-serif text-3xl leading-tight tracking-[-0.025em] text-ink-950 sm:text-4xl">{c.title}</h2></div><p className="max-w-xl text-xs leading-6 text-ink-600 lg:justify-self-end">{c.description}</p></Reveal>
     <div className="mt-9 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{items.map((item, index) => <Reveal key={item.id} delay={index * .05} className="h-full"><article className="flex h-full min-h-[174px] flex-col items-center justify-center rounded-2xl border border-ink-900/[0.09] bg-white px-5 py-5 text-center shadow-[0_12px_35px_-32px_rgba(34,22,25,.8)]"><img src={item.imageUrl} alt={item.title} loading="lazy" className="h-[68px] w-full max-w-[210px] object-contain" /><h3 className="mt-3 text-[11px] font-extrabold leading-4 text-ink-950">{item.title}</h3><p className="mt-1 text-[9px] font-medium leading-4 text-ink-500">{item.subtitle}</p></article></Reveal>)}</div>
-  </div></section>;
+  </MobileScrollScene></section>;
 }
 
 function Faq({ content }: { content: Content }) {
