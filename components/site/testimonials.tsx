@@ -2,6 +2,7 @@
 
 import { BadgeCheck, Play, Quote, Star } from 'lucide-react';
 import { MobileCarousel } from '@/components/ui/mobile-carousel';
+import { MobileScrollScene } from '@/components/ui/mobile-scroll-scene';
 import { Reveal } from '@/components/ui/reveal';
 import type { SiteContent, Testimonial } from '@/lib/types';
 
@@ -11,7 +12,7 @@ export function Testimonials({ testimonials, content }: { testimonials: Testimon
   const c = content.testimonialsSection;
   const label = `${c.title} ${c.titleAccent}`;
   return <section id="stories" className="scroll-mt-24 bg-white py-24 sm:py-28 lg:py-32">
-    <div className="container-site">
+    <MobileScrollScene name="stories" className="container-site">
       <Reveal className="mx-auto max-w-3xl text-center"><span className="eyebrow"><BadgeCheck className="h-4 w-4" />{c.eyebrow}</span><h2 className="display-title mt-5">{c.title} <em className="text-red-600">{c.titleAccent}</em></h2><p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-ink-700">{c.description}</p></Reveal>
       <Reveal className="mt-10 lg:hidden"><MobileCarousel
         label={label}
@@ -24,7 +25,7 @@ export function Testimonials({ testimonials, content }: { testimonials: Testimon
           <TestimonialCard testimonial={testimonial} content={c} />
         </Reveal>)}
       </div>
-    </div>
+    </MobileScrollScene>
   </section>;
 }
 

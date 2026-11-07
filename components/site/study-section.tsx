@@ -3,6 +3,7 @@
 import { ArrowRight, BookOpen, CalendarDays, Check, GraduationCap, WalletCards } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MobileCarousel } from '@/components/ui/mobile-carousel';
+import { MobileScrollScene } from '@/components/ui/mobile-scroll-scene';
 import { Reveal } from '@/components/ui/reveal';
 import type { SiteContent, StudyProgram, SubmissionType } from '@/lib/types';
 
@@ -13,7 +14,7 @@ export function StudySection({ programs, content, onConsultation }: { programs: 
   return <section id="study" className="relative scroll-mt-24 overflow-hidden bg-ink-950 py-24 text-white sm:py-28 lg:py-32">
     <div className="pointer-events-none absolute -right-40 top-0 h-[600px] w-[600px] rounded-full bg-red-600/15 blur-[120px]" />
     <div className="pointer-events-none absolute inset-0 opacity-[0.045]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.8) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.8) 1px,transparent 1px)', backgroundSize: '70px 70px' }} />
-    <div className="container-site relative">
+    <MobileScrollScene name="study" className="container-site relative">
       <Reveal className="grid items-end gap-8 lg:grid-cols-[1fr_430px]">
         <div><span className="eyebrow text-red-500"><GraduationCap className="h-4 w-4" />{c.eyebrow}</span><h2 className="display-title mt-5 max-w-2xl text-white">{c.title} <em className="text-red-500">{c.titleAccent}</em></h2></div>
         <p className="text-sm leading-7 text-white/60">{c.description}</p>
@@ -37,7 +38,7 @@ export function StudySection({ programs, content, onConsultation }: { programs: 
           </div>
         </div>
       </div>
-    </div>
+    </MobileScrollScene>
   </section>;
 }
 
