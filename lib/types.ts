@@ -100,6 +100,8 @@ export interface Accreditation {
 export interface Submission {
   id: string; reference: string; type: SubmissionType; fullName: string; email: string;
   data: Record<string, unknown>; status: SubmissionStatus; createdAt: string;
+  /** Visitor address captured from the proxy headers when the form was submitted. */
+  ip: string;
 }
 
 export interface PublicData {
@@ -109,4 +111,42 @@ export interface PublicData {
 
 export interface AdminData extends PublicData {
   submissions: Submission[]; storageMode: StorageMode;
+}
+
+/** Aggregate record per visitor address shown in the admin security tab. */
+export interface Visitor {
+  ip: string; firstSeen: string; lastSeen: string; visitCount: number;
+  lastPage: string; lastUserAgent: string; lastReferrer: string;
+  /** Number of consultation assessments submitted from this address. */
+  submissionCount: number;
+}
+
+export type VisitorActivityKind = 'page' | 'submission' | 'blocked';
+
+/** One tracked request, used for the recent-activity feed. */
+export interface VisitorVisit {
+  id: string; ip: string; path: string; userAgent: string; referrer: string;
+  kind: VisitorActivityKind; createdAt: string;
+}
+
+export interface BlockedIp {
+  ip: string; reason: string; blockedAt: string; blockedBy: string;
+}
+
+export interface SecurityStats {
+  totalVisitors: number; totalVisits: number; visitsToday: number;
+  blockedCount: number; linkedSubmissions: number; submissionsToday: number;
+}
+
+export interface SecurityOverview {
+  storageMode: StorageMode;
+  visitors: Visitor[]; recentVisits: VisitorVisit[]; blockedIps: BlockedIp[];
+  stats: SecurityStats;
+  /** Address of the administrator viewing the tab, so their own IP is flagged. */
+  currentIp: string | null;
+}
+
+/** JSON preview store: every CMS collection plus the visitor-security tables. */
+export interface PreviewStore extends AdminData {
+  visitors: Visitor[]; visitorVisits: VisitorVisit[]; blockedIps: BlockedIp[];
 }

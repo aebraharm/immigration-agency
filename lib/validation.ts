@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { normalizeIp } from './ip';
 
 const required = (key: string) => z.string().trim().min(1, `${key} is required`).max(500);
 
@@ -53,3 +54,16 @@ export const loginSchema = z.object({ email: z.string().email(), password: z.str
 export function cleanText(value: unknown, max = 20000) {
   return typeof value === 'string' ? value.trim().slice(0, max) : '';
 }
+
+export const blockIpSchema = z.object({
+  ip: z.string().trim().min(3, 'Enter an IP address.').max(64, 'That IP address is too long.')
+    .transform((value) => normalizeIp(value))
+    .refine((value): value is string => Boolean(value), { message: 'Enter a valid IPv4 or IPv6 address.' }),
+  reason: z.string().trim().max(280, 'Keep the reason under 280 characters.').optional().default(''),
+});
+
+export const unblockIpSchema = z.object({
+  ip: z.string().trim().min(3, 'Enter an IP address.').max(64, 'That IP address is too long.')
+    .transform((value) => normalizeIp(value))
+    .refine((value): value is string => Boolean(value), { message: 'Enter a valid IPv4 or IPv6 address.' }),
+});

@@ -1,11 +1,12 @@
 'use client';
 
-import { Award, BookOpen, Database, ExternalLink, FileText, Globe2, LayoutDashboard, LoaderCircle, LogOut, MessageSquareQuote, Settings2, Users, UsersRound } from 'lucide-react';
+import { Award, BookOpen, Database, ExternalLink, Globe2, LayoutDashboard, LoaderCircle, LogOut, MessageSquareQuote, Settings2, ShieldAlert, Users, UsersRound } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { AccreditationsManager } from './accreditations-manager';
 import { ContentManager } from './content-manager';
 import { CountriesManager } from './countries-manager';
 import { LoginScreen } from './login-screen';
+import { SecurityManager } from './security-manager';
 import { StudyManager } from './study-manager';
 import { SubmissionsManager } from './submissions-manager';
 import { TeamManager } from './team-manager';
@@ -16,7 +17,7 @@ import { Button, ButtonLink } from '@/components/ui/button';
 import type { AdminData } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
-type Tab = 'content' | 'countries' | 'study' | 'team' | 'testimonials' | 'accreditations' | 'submissions';
+type Tab = 'content' | 'countries' | 'study' | 'team' | 'testimonials' | 'accreditations' | 'submissions' | 'security';
 const tabs: { id: Tab; label: string; description: string; icon: typeof LayoutDashboard }[] = [
   { id: 'content', label: 'Branding & content', description: 'Website copy and settings', icon: Settings2 },
   { id: 'countries', label: 'Countries & processes', description: 'Destinations and pathways', icon: Globe2 },
@@ -25,6 +26,7 @@ const tabs: { id: Tab; label: string; description: string; icon: typeof LayoutDa
   { id: 'testimonials', label: 'Testimonials', description: 'Client photos and videos', icon: MessageSquareQuote },
   { id: 'accreditations', label: 'Licenses & Accreditations', description: 'Professional badges and trust copy', icon: Award },
   { id: 'submissions', label: 'Consultations', description: 'Assessment submissions', icon: Users },
+  { id: 'security', label: 'Visitor Logs & IP Security', description: 'Traffic, firewall and blocked IPs', icon: ShieldAlert },
 ];
 
 export function AdminApp() {
@@ -92,6 +94,7 @@ export function AdminApp() {
         {tab === 'testimonials' && <TestimonialsManager testimonials={data.testimonials} onChange={(testimonials) => setData({ ...data, testimonials })} onToast={setToast} />}
         {tab === 'accreditations' && <AccreditationsManager items={data.accreditations} content={data.content} onChange={(accreditations) => setData({ ...data, accreditations })} onContentSaved={(content) => setData({ ...data, content })} onToast={setToast} />}
         {tab === 'submissions' && <SubmissionsManager submissions={data.submissions} content={data.content} onChange={(submissions) => setData({ ...data, submissions })} onToast={setToast} />}
+        {tab === 'security' && <SecurityManager onToast={setToast} />}
       </main>
     </div>
     <Toast message={toast} onClose={() => setToast('')} />

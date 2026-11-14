@@ -27,6 +27,13 @@ const now = new Date().toISOString();
 
 console.log(`Initializing ${url}…`);
 await db.executeMultiple(schema);
+// Older databases predate visitor attribution; SQLite needs an explicit ALTER.
+const submissionColumns = await db.execute('PRAGMA table_info(submissions)');
+if (!submissionColumns.rows.some((row) => String(row.name) === 'ip')) {
+  await db.execute("ALTER TABLE submissions ADD COLUMN ip TEXT NOT NULL DEFAULT ''");
+  console.log('✓ submissions.ip added for visitor attribution');
+}
+await db.execute('CREATE INDEX IF NOT EXISTS idx_submissions_ip ON submissions(ip)');
 await db.execute({ sql: 'INSERT OR IGNORE INTO site_content (id, data, updated_at) VALUES (1, ?, ?)', args: [JSON.stringify(seed.content), now] });
 for (const item of seed.countries) {
   await db.execute({ sql: 'INSERT OR IGNORE INTO countries (id, slug, name, code, flag, tagline, summary, image, routes, eligibility, processes, timeline, sort_order, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', args: [item.id, item.slug, item.name, item.code, item.flag, item.tagline, item.summary, item.image, JSON.stringify(item.routes), JSON.stringify(item.eligibility), JSON.stringify(item.processes), JSON.stringify(item.timeline), item.sortOrder, now] });
@@ -43,7 +50,7 @@ for (const item of seed.teamMembers) {
 for (const item of seed.accreditations) {
   await db.execute({ sql: 'INSERT OR IGNORE INTO accreditations (id, title, subtitle, image_url, sort_order, updated_at) VALUES (?, ?, ?, ?, ?, ?)', args: [item.id, item.title, item.subtitle, item.imageUrl, item.sortOrder, now] });
 }
-const tables = ['site_content', 'countries', 'study_programs', 'testimonials', 'team_members', 'accreditations', 'submissions'];
+const tables = ['site_content', 'countries', 'study_programs', 'testimonials', 'team_members', 'accreditations', 'submissions', 'visitors', 'visitor_visits', 'blocked_ips'];
 for (const table of tables) {
   const result = await db.execute(`SELECT COUNT(*) AS count FROM ${table}`);
   console.log(`✓ ${table}: ${result.rows[0].count} records`);

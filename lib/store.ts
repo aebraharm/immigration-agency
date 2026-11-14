@@ -8,9 +8,11 @@ import {
   createSeedData, seedAccreditations, seedContent, seedCountries, seedPrograms,
   seedTeamMembers, seedTestimonials,
 } from './seed';
+import { isLoopbackIp, normalizeIp } from './ip';
 import type {
-  Accreditation, AdminData, Country, PublicData, SiteContent, StorageMode, StudyProgram,
-  Submission, SubmissionStatus, SubmissionType, TeamMember, Testimonial,
+  Accreditation, AdminData, BlockedIp, Country, PreviewStore, PublicData, SecurityOverview,
+  SiteContent, StorageMode, StudyProgram, Submission, SubmissionStatus, SubmissionType,
+  TeamMember, Testimonial, Visitor, VisitorActivityKind, VisitorVisit,
 } from './types';
 
 const tursoUrl = process.env.TURSO_DATABASE_URL?.trim();
@@ -58,7 +60,7 @@ async function schema() {
   return readFile(path.join(process.cwd(), 'db', 'schema.sql'), 'utf8');
 }
 
-async function writeFallback(data: AdminData) {
+async function writeFallback(data: PreviewStore) {
   await mkdir(path.dirname(fallbackPath), { recursive: true });
   const temporary = `${fallbackPath}.${process.pid}.tmp`;
   await writeFile(temporary, JSON.stringify(data, null, 2), 'utf8');
@@ -68,6 +70,27 @@ async function writeFallback(data: AdminData) {
 async function seedFallback() {
   const data = createSeedData();
   await writeFallback(data);
+}
+
+/**
+ * Existing databases created before the visitor-security feature do not have
+ * `submissions.ip`, and SQLite has no `ADD COLUMN IF NOT EXISTS`. Inspect the
+ * table and add the column once; concurrent instances may race, so a duplicate
+ * column error is treated as success.
+ */
+async function ensureSubmissionsIpColumn(db: Client) {
+  const columns = await db.execute('PRAGMA table_info(submissions)');
+  if (!columns.rows.some((row) => String(row.name) === 'ip')) {
+    try {
+      await db.execute("ALTER TABLE submissions ADD COLUMN ip TEXT NOT NULL DEFAULT ''");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (!/duplicate column/i.test(message)) throw error;
+    }
+  }
+  // The index lives here rather than in schema.sql: executing the schema on a
+  // database that predates `submissions.ip` must not fail before the ALTER runs.
+  await db.execute('CREATE INDEX IF NOT EXISTS idx_submissions_ip ON submissions(ip)');
 }
 
 async function seedTurso(db: Client) {
@@ -109,6 +132,7 @@ async function initialize() {
   if (storageMode === 'turso') {
     client = createClient({ url: tursoUrl!, authToken: tursoToken! });
     await client.executeMultiple(await schema());
+    await ensureSubmissionsIpColumn(client);
     await seedTurso(client);
   } else {
     try { await readFile(fallbackPath, 'utf8'); } catch { await seedFallback(); }
@@ -120,15 +144,24 @@ async function ready() {
   await initialization;
 }
 
-async function readFallback(): Promise<AdminData> {
+async function readFallback(): Promise<PreviewStore> {
   await ready();
   try {
-    const data = JSON.parse(await readFile(fallbackPath, 'utf8')) as AdminData;
+    const data = JSON.parse(await readFile(fallbackPath, 'utf8')) as Partial<PreviewStore>;
     return {
-      ...data,
       content: normalizeContent(data.content),
+      countries: Array.isArray(data.countries) ? data.countries : structuredClone(seedCountries),
+      programs: Array.isArray(data.programs) ? data.programs : structuredClone(seedPrograms),
+      testimonials: Array.isArray(data.testimonials) ? data.testimonials : structuredClone(seedTestimonials),
       teamMembers: Array.isArray(data.teamMembers) ? data.teamMembers : structuredClone(seedTeamMembers),
       accreditations: Array.isArray(data.accreditations) ? data.accreditations : structuredClone(seedAccreditations),
+      submissions: (Array.isArray(data.submissions) ? data.submissions : []).map((item) => ({
+        ...item,
+        ip: typeof item.ip === 'string' ? item.ip : '',
+      })),
+      visitors: Array.isArray(data.visitors) ? data.visitors : [],
+      visitorVisits: Array.isArray(data.visitorVisits) ? data.visitorVisits : [],
+      blockedIps: Array.isArray(data.blockedIps) ? data.blockedIps : [],
       storageMode: 'preview',
     };
   } catch {
@@ -137,7 +170,7 @@ async function readFallback(): Promise<AdminData> {
   }
 }
 
-async function mutateFallback<T>(mutator: (data: AdminData) => T | Promise<T>): Promise<T> {
+async function mutateFallback<T>(mutator: (data: PreviewStore) => T | Promise<T>): Promise<T> {
   const operation = writeQueue.then(async () => {
     const data = await readFallback();
     const result = await mutator(data);
@@ -196,7 +229,40 @@ function mapSubmission(row: Record<string, unknown>): Submission {
     fullName: String(row.full_name), email: String(row.email), data: jsonParse(row.data, {}),
     status: (['new', 'reviewed', 'contacted', 'archived'].includes(String(row.status)) ? String(row.status) : 'new') as SubmissionStatus,
     createdAt: String(row.created_at),
+    ip: String(row.ip || ''),
   };
+}
+
+function mapVisitor(row: Record<string, unknown>, submissionCount = 0): Visitor {
+  return {
+    ip: String(row.ip), firstSeen: String(row.first_seen || ''), lastSeen: String(row.last_seen || ''),
+    visitCount: Number(row.visit_count || 0), lastPage: String(row.last_page || ''),
+    lastUserAgent: String(row.last_user_agent || ''), lastReferrer: String(row.last_referrer || ''),
+    submissionCount,
+  };
+}
+
+function mapVisitorVisit(row: Record<string, unknown>): VisitorVisit {
+  const kind = String(row.kind || 'page');
+  return {
+    id: String(row.id), ip: String(row.ip), path: String(row.path || ''),
+    userAgent: String(row.user_agent || ''), referrer: String(row.referrer || ''),
+    kind: (['page', 'submission', 'blocked'].includes(kind) ? kind : 'page') as VisitorActivityKind,
+    createdAt: String(row.created_at || ''),
+  };
+}
+
+function mapBlockedIp(row: Record<string, unknown>): BlockedIp {
+  return {
+    ip: String(row.ip), reason: String(row.reason || ''),
+    blockedAt: String(row.blocked_at || ''), blockedBy: String(row.blocked_by || 'admin'),
+  };
+}
+
+function startOfUtcDay() {
+  const start = new Date();
+  start.setUTCHours(0, 0, 0, 0);
+  return start.toISOString();
 }
 
 export async function getPublicData(): Promise<PublicData> {
@@ -374,17 +440,17 @@ function reference(type: SubmissionType) {
   return `RP-${type === 'job' ? 'JOB' : 'STU'}-${date}-${randomBytes(3).toString('hex').toUpperCase()}`;
 }
 
-export async function createSubmission(type: SubmissionType, data: Record<string, unknown>) {
+export async function createSubmission(type: SubmissionType, data: Record<string, unknown>, rawIp = '') {
   const item: Submission = {
     id: randomUUID(), reference: reference(type), type,
     fullName: String(data.fullName), email: String(data.email).toLowerCase(), data,
-    status: 'new', createdAt: new Date().toISOString(),
+    status: 'new', createdAt: new Date().toISOString(), ip: normalizeIp(rawIp) || '',
   };
   if (storageMode === 'preview') return mutateFallback((store) => { store.submissions.push(item); return item; });
   await ready();
   await client!.execute({
-    sql: 'INSERT INTO submissions (id, reference, type, full_name, email, data, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-    args: [item.id, item.reference, item.type, item.fullName, item.email, JSON.stringify(item.data), item.status, item.createdAt] as InValue[],
+    sql: 'INSERT INTO submissions (id, reference, type, full_name, email, data, status, created_at, ip) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    args: [item.id, item.reference, item.type, item.fullName, item.email, JSON.stringify(item.data), item.status, item.createdAt, item.ip] as InValue[],
   });
   return item;
 }
@@ -406,4 +472,218 @@ export async function deleteSubmission(id: string) {
   if (storageMode === 'preview') return mutateFallback((data) => { data.submissions = data.submissions.filter((item) => item.id !== id); });
   await ready();
   await client!.execute({ sql: 'DELETE FROM submissions WHERE id = ?', args: [id] });
+}
+
+/* ------------------------------------------------------------------------- *
+ * Visitor tracking & IP firewall
+ * ------------------------------------------------------------------------- */
+
+/** Maximum activity rows retained in Turso before the oldest entries rotate out. */
+const MAX_ACTIVITY_ROWS = 5000;
+const VISITOR_RETENTION_DAYS = 365;
+
+export interface RecordVisitInput {
+  ip: string;
+  path?: string;
+  userAgent?: string;
+  referrer?: string;
+  kind?: VisitorActivityKind;
+}
+
+/**
+ * Records a page view or assessment submission for a visitor address. Never
+ * throws: tracking must not be able to break a public page render.
+ */
+export async function recordVisit(input: RecordVisitInput): Promise<void> {
+  const ip = normalizeIp(input.ip);
+  // Internal server requests arrive without proxy headers and resolve to
+  // loopback; they are not real visitors and would only add noise to the logs.
+  if (!ip || isLoopbackIp(ip)) return;
+
+  const now = new Date().toISOString();
+  const path = (input.path || '/').slice(0, 300) || '/';
+  const userAgent = (input.userAgent || '').slice(0, 400);
+  const referrer = (input.referrer || '').slice(0, 500);
+  const kind: VisitorActivityKind = input.kind === 'submission' || input.kind === 'blocked' ? input.kind : 'page';
+  const id = randomUUID();
+
+  if (storageMode === 'preview') {
+    await mutateFallback((data) => {
+      const existing = data.visitors.find((entry) => entry.ip === ip);
+      if (existing) {
+        existing.lastSeen = now;
+        existing.visitCount += 1;
+        existing.lastPage = path;
+        existing.lastUserAgent = userAgent;
+        existing.lastReferrer = referrer;
+      } else {
+        data.visitors.push({
+          ip, firstSeen: now, lastSeen: now, visitCount: 1, lastPage: path,
+          lastUserAgent: userAgent, lastReferrer: referrer, submissionCount: 0,
+        });
+      }
+      data.visitorVisits.unshift({ id, ip, path, userAgent, referrer, kind, createdAt: now });
+      if (data.visitorVisits.length > MAX_ACTIVITY_ROWS) data.visitorVisits.length = MAX_ACTIVITY_ROWS;
+    });
+    return;
+  }
+
+  await ready();
+  await Promise.all([
+    client!.execute({
+      sql: `INSERT INTO visitors (ip, first_seen, last_seen, visit_count, last_page, last_user_agent, last_referrer)
+            VALUES (?, ?, ?, 1, ?, ?, ?)
+            ON CONFLICT(ip) DO UPDATE SET
+              last_seen = excluded.last_seen,
+              visit_count = visitors.visit_count + 1,
+              last_page = excluded.last_page,
+              last_user_agent = excluded.last_user_agent,
+              last_referrer = excluded.last_referrer`,
+      args: [ip, now, now, path, userAgent, referrer],
+    }),
+    client!.execute({
+      sql: 'INSERT INTO visitor_visits (id, ip, path, user_agent, referrer, kind, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      args: [id, ip, path, userAgent, referrer, kind, now],
+    }),
+  ]);
+
+  // Rotate the activity log and drop stale aggregates opportunistically so
+  // neither table grows without bound. Submissions keep their own IP record.
+  if (Math.random() < 0.03) {
+    const staleBefore = new Date(Date.now() - VISITOR_RETENTION_DAYS * 24 * 60 * 60 * 1000).toISOString();
+    await Promise.all([
+      client!.execute({
+        sql: 'DELETE FROM visitor_visits WHERE id IN (SELECT id FROM visitor_visits ORDER BY created_at DESC LIMIT -1 OFFSET ?)',
+        args: [MAX_ACTIVITY_ROWS],
+      }),
+      client!.execute({ sql: 'DELETE FROM visitors WHERE last_seen < ?', args: [staleBefore] }),
+    ]).catch(() => undefined);
+  }
+}
+
+/** True when the address is on the Turso firewall list. Invalid values are never blocked. */
+export async function isIpBlocked(rawIp: string): Promise<boolean> {
+  const ip = normalizeIp(rawIp);
+  if (!ip) return false;
+  if (storageMode === 'preview') {
+    const data = await readFallback();
+    return data.blockedIps.some((entry) => entry.ip === ip);
+  }
+  await ready();
+  const result = await client!.execute({ sql: 'SELECT 1 FROM blocked_ips WHERE ip = ? LIMIT 1', args: [ip] });
+  return result.rows.length > 0;
+}
+
+export async function blockIp(rawIp: string, reason = '', blockedBy = 'admin') {
+  const ip = normalizeIp(rawIp);
+  if (!ip) throw new Error('Enter a valid IPv4 or IPv6 address to block.');
+  const entry: BlockedIp = {
+    ip, reason: reason.trim().slice(0, 280), blockedAt: new Date().toISOString(), blockedBy,
+  };
+
+  if (storageMode === 'preview') {
+    await mutateFallback((data) => {
+      data.blockedIps = data.blockedIps.filter((item) => item.ip !== ip);
+      data.blockedIps.unshift(entry);
+    });
+    return entry;
+  }
+
+  await ready();
+  await client!.execute({
+    sql: `INSERT INTO blocked_ips (ip, reason, blocked_at, blocked_by) VALUES (?, ?, ?, ?)
+          ON CONFLICT(ip) DO UPDATE SET reason = excluded.reason, blocked_at = excluded.blocked_at, blocked_by = excluded.blocked_by`,
+    args: [entry.ip, entry.reason, entry.blockedAt, entry.blockedBy],
+  });
+  return entry;
+}
+
+export async function unblockIp(rawIp: string) {
+  const ip = normalizeIp(rawIp);
+  if (!ip) throw new Error('Enter a valid IPv4 or IPv6 address to unblock.');
+
+  if (storageMode === 'preview') {
+    let removed = false;
+    await mutateFallback((data) => {
+      const before = data.blockedIps.length;
+      data.blockedIps = data.blockedIps.filter((entry) => entry.ip !== ip);
+      removed = data.blockedIps.length !== before;
+    });
+    return { ip, removed };
+  }
+
+  await ready();
+  const result = await client!.execute({ sql: 'DELETE FROM blocked_ips WHERE ip = ?', args: [ip] });
+  return { ip, removed: Number(result.rowsAffected) > 0 };
+}
+
+/** Aggregated data for the Admin Portal "Visitor Logs & IP Security" tab. */
+export async function getSecurityOverview(currentIp: string | null = null): Promise<SecurityOverview> {
+  await ready();
+
+  if (storageMode === 'preview') {
+    const data = await readFallback();
+    const dayStart = startOfUtcDay();
+    const counts = new Map<string, number>();
+    for (const item of data.submissions) {
+      if (!item.ip) continue;
+      counts.set(item.ip, (counts.get(item.ip) || 0) + 1);
+    }
+    const visitors = [...data.visitors]
+      .sort((a, b) => b.lastSeen.localeCompare(a.lastSeen))
+      .slice(0, 250)
+      .map((entry) => ({ ...entry, submissionCount: counts.get(entry.ip) || 0 }));
+    return {
+      storageMode,
+      visitors,
+      recentVisits: [...data.visitorVisits].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 100),
+      blockedIps: [...data.blockedIps].sort((a, b) => b.blockedAt.localeCompare(a.blockedAt)),
+      stats: {
+        totalVisitors: data.visitors.length,
+        totalVisits: data.visitors.reduce((total, entry) => total + entry.visitCount, 0),
+        visitsToday: data.visitorVisits.filter((entry) => entry.createdAt >= dayStart).length,
+        blockedCount: data.blockedIps.length,
+        linkedSubmissions: [...counts.values()].reduce((total, count) => total + count, 0),
+        submissionsToday: data.submissions.filter((entry) => entry.createdAt >= dayStart).length,
+      },
+      currentIp,
+    };
+  }
+
+  const db = client!;
+  const dayStart = startOfUtcDay();
+  const [visitorRows, visitRows, blockedRows, totals, todayVisits, submissionRows, todaySubmissions] = await Promise.all([
+    db.execute('SELECT * FROM visitors ORDER BY last_seen DESC LIMIT 250'),
+    db.execute('SELECT * FROM visitor_visits ORDER BY created_at DESC LIMIT 100'),
+    db.execute('SELECT * FROM blocked_ips ORDER BY blocked_at DESC'),
+    db.execute('SELECT COUNT(*) AS total_visitors, COALESCE(SUM(visit_count), 0) AS total_visits FROM visitors'),
+    db.execute({ sql: 'SELECT COUNT(*) AS visits_today FROM visitor_visits WHERE created_at >= ?', args: [dayStart] }),
+    db.execute("SELECT ip, COUNT(*) AS count FROM submissions WHERE ip <> '' GROUP BY ip"),
+    db.execute({ sql: 'SELECT COUNT(*) AS count FROM submissions WHERE created_at >= ?', args: [dayStart] }),
+  ]);
+
+  const submissionCounts = new Map<string, number>();
+  for (const row of submissionRows.rows) submissionCounts.set(String(row.ip), Number(row.count || 0));
+
+  const visitors = visitorRows.rows.map((row) => {
+    const record = row as unknown as Record<string, unknown>;
+    return mapVisitor(record, submissionCounts.get(String(record.ip)) || 0);
+  });
+  const totalRow = totals.rows[0] as unknown as Record<string, unknown> | undefined;
+
+  return {
+    storageMode,
+    visitors,
+    recentVisits: visitRows.rows.map((row) => mapVisitorVisit(row as unknown as Record<string, unknown>)),
+    blockedIps: blockedRows.rows.map((row) => mapBlockedIp(row as unknown as Record<string, unknown>)),
+    stats: {
+      totalVisitors: Number(totalRow?.total_visitors || 0),
+      totalVisits: Number(totalRow?.total_visits || 0),
+      visitsToday: Number((todayVisits.rows[0] as unknown as Record<string, unknown> | undefined)?.visits_today || 0),
+      blockedCount: blockedRows.rows.length,
+      linkedSubmissions: [...submissionCounts.values()].reduce((total, count) => total + count, 0),
+      submissionsToday: Number((todaySubmissions.rows[0] as unknown as Record<string, unknown> | undefined)?.count || 0),
+    },
+    currentIp,
+  };
 }
