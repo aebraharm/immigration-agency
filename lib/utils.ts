@@ -3,10 +3,12 @@ export function cn(...classes: Array<string | false | null | undefined>) {
 }
 
 export function formatDate(value: string, withTime = false) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
   return new Intl.DateTimeFormat('en', {
     day: 'numeric', month: 'short', year: 'numeric',
     ...(withTime ? { hour: '2-digit', minute: '2-digit' } : {}),
-  }).format(new Date(value));
+  }).format(date);
 }
 
 export function humanize(key: string) {

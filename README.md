@@ -29,6 +29,29 @@ The **Admin Portal** navigation entry is hidden below `1024px` and appears only 
 
 Authentication uses a signed, HTTP-only, same-site session cookie with an eight-hour expiry. Login and public submissions are rate-limited. Set `ADMIN_EMAIL`, `ADMIN_PASSWORD` and a strong random `AUTH_SECRET` in production; the supplied credentials remain the defaults required by this project.
 
+## Visitor logs & IP firewall
+
+Every request for the public website is attributed to the visitor's network address, read from the proxy headers Netlify and other edge providers forward (`x-nf-client-connection-ip`, `x-forwarded-for`, `x-real-ip`). `lib/ip.ts` normalises IPv4, IPv6, bracketed values and IPv4-mapped IPv6 (`::ffff:`) before anything is stored.
+
+- `visitors` keeps one aggregate row per address: first and last seen timestamps, visit count, last active page, device string and referrer.
+- `visitor_visits` is the append-only activity feed behind "Recent activity" and rotates automatically past 5,000 rows. Visitor aggregates untouched for a year are pruned; consultation submissions keep their own IP record either way.
+- Loopback and unspecified addresses are ignored: they come from internal server requests and health checks, never from a real visitor.
+- `submissions.ip` links every consultation assessment to the visitor address that submitted it. The Consultations table, CSV export and assessment detail view all expose it, and the detail view can block that address in one click.
+- `blocked_ips` is the firewall list managed from **Admin Portal → Visitor Logs & IP Security**.
+
+### How blocking works
+
+`middleware.ts` resolves the visitor address for every public path and checks it against `blocked_ips`. A blocked visitor receives a clean, self-contained **403 Access Denied** page (`lib/access-denied.ts`) with no CMS, media or database dependency. Because the edge runtime cannot open a libSQL connection, the middleware asks the Node-runtime route `/api/security/ip-status` for the decision and caches the answer per instance for ten seconds.
+
+Two details keep the feature safe in production:
+
+- **Fail open.** If the status route, database or network is unavailable, requests continue. A security lookup never takes the public website offline.
+- **Defence in depth.** The public page render re-checks the database before rendering (showing the same Access Denied view) and `/api/submissions` rejects blocked addresses with a `403`, so blocking is enforced even if middleware is bypassed.
+
+The `/admin` portal and `/api/admin/*` are deliberately excluded from the firewall so an administrator can always sign in and lift a restriction — including one on their own address. Static assets are excluded as well. The admin tab flags your own address and never blocks it automatically.
+
+Blocking takes effect immediately for server renders and within about ten seconds on every edge instance (the status cache). Unblocking behaves the same way.
+
 ## What is editable
 
 ### Branding & general content
@@ -120,7 +143,12 @@ The SQL schema contains:
 - `testimonials`
 - `team_members`
 - `accreditations`
-- `submissions`
+- `submissions` (including the visitor `ip` column)
+- `visitors`
+- `visitor_visits`
+- `blocked_ips`
+
+Existing databases are upgraded in place: `lib/store.ts` inspects `submissions` and adds the `ip` column when it is missing, and `db/schema.sql` creates the three visitor-security tables idempotently.
 
 `db/seed.json` is the shared source for initial content used by automatic initialization and the standalone seed script.
 
@@ -153,7 +181,7 @@ Base64 keeps uploads portable across Turso and the preview store, but serverless
 ```text
 app/                       Public page, admin page and API route handlers
 components/site/           Public sections, country explorer and assessments
-components/admin/          Login, CMS managers and submission viewer
+components/admin/          Login, CMS managers, submission viewer and IP security
 components/ui/             Buttons, modals, fields, uploads and motion
 lib/                       Types, auth, validation, Turso/preview repository
 db/schema.sql              Complete idempotent SQL schema

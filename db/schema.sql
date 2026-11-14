@@ -86,7 +86,39 @@ CREATE TABLE IF NOT EXISTS submissions (
   email TEXT NOT NULL,
   data TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'reviewed', 'contacted', 'archived')),
-  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  -- Visitor address captured from the request headers at submission time.
+  ip TEXT NOT NULL DEFAULT ''
+);
+
+-- One aggregate row per visitor address (visit count, timestamps, last page).
+CREATE TABLE IF NOT EXISTS visitors (
+  ip TEXT PRIMARY KEY,
+  first_seen TEXT NOT NULL,
+  last_seen TEXT NOT NULL,
+  visit_count INTEGER NOT NULL DEFAULT 0,
+  last_page TEXT NOT NULL DEFAULT '',
+  last_user_agent TEXT NOT NULL DEFAULT '',
+  last_referrer TEXT NOT NULL DEFAULT ''
+);
+
+-- Append-only activity log for the security dashboard (trimmed automatically).
+CREATE TABLE IF NOT EXISTS visitor_visits (
+  id TEXT PRIMARY KEY,
+  ip TEXT NOT NULL,
+  path TEXT NOT NULL DEFAULT '',
+  user_agent TEXT NOT NULL DEFAULT '',
+  referrer TEXT NOT NULL DEFAULT '',
+  kind TEXT NOT NULL DEFAULT 'page' CHECK (kind IN ('page', 'submission', 'blocked')),
+  created_at TEXT NOT NULL
+);
+
+-- Firewall list. Any address here receives the 403 Access Denied page.
+CREATE TABLE IF NOT EXISTS blocked_ips (
+  ip TEXT PRIMARY KEY,
+  reason TEXT NOT NULL DEFAULT '',
+  blocked_at TEXT NOT NULL,
+  blocked_by TEXT NOT NULL DEFAULT 'admin'
 );
 
 CREATE INDEX IF NOT EXISTS idx_submissions_type_created ON submissions(type, created_at DESC);
@@ -96,3 +128,6 @@ CREATE INDEX IF NOT EXISTS idx_programs_order ON study_programs(sort_order);
 CREATE INDEX IF NOT EXISTS idx_testimonials_order ON testimonials(sort_order);
 CREATE INDEX IF NOT EXISTS idx_team_members_order ON team_members(sort_order);
 CREATE INDEX IF NOT EXISTS idx_accreditations_order ON accreditations(sort_order);
+CREATE INDEX IF NOT EXISTS idx_visitors_last_seen ON visitors(last_seen DESC);
+CREATE INDEX IF NOT EXISTS idx_visitor_visits_created ON visitor_visits(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_visitor_visits_ip ON visitor_visits(ip, created_at DESC);
